@@ -2,7 +2,7 @@
 
 #include <string>
 #include <fstream>
-#include <tuple>
+
 #include "common.hpp"
 #include "index_data.hpp"
 
@@ -30,12 +30,12 @@ namespace eg
             file.seekp(pos, std::ios::beg);
 
             // Create IX record
-            index_data data {.ix = i, .pos = p, .size = s, .active = a};
+            index_data data {.pos = p, .size = s, .active = a};
             file.write(reinterpret_cast<char *>(&data), sizeof(index_data));
             if (file.fail()) std::runtime_error("Unable to write to index file.");
         }
 
-        auto read(const uint_t i) -> std::tuple<uint_t, uint_t, bool>
+        auto read(const uint_t i) -> index_data
         {
             std::ifstream file(index_file_, std::ios::binary);
 
@@ -50,7 +50,7 @@ namespace eg
             file.read(reinterpret_cast<char *>(&data), sizeof(index_data));
             if (file.fail()) std::runtime_error("Unable to read from index file.");
 
-            return {data.pos, data.size, data.active};
+            return data;
         }
 
     private:
@@ -70,7 +70,7 @@ namespace eg
             // Check if .id file does not exists
             if (auto size = file.tellp(); size == 0)
             {
-                index_data data {.ix = 0, .pos = 0, .size = 0, .active = 0};
+                index_data data {.pos = 0, .size = 0, .active = 0};
                 file.write(reinterpret_cast<const char *>(&data), sizeof(index_data));
                 if (file.fail()) std::runtime_error("Unable to write to index file.");
             }
