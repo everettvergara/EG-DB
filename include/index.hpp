@@ -31,6 +31,7 @@ namespace eg
             file.seekp(pos, std::ios::beg);
 
             // Create IX record
+            std::cout << "write: " << data.pos << " " << data.size << " " << data.active << std::endl;
             file.write(reinterpret_cast<const char *>(&data), sizeof(index_data));
             
             if (file.fail()) throw std::runtime_error("Unable to write to index file.");
@@ -41,7 +42,7 @@ namespace eg
             std::ifstream file(index_file_, std::ios::binary);
 
             // Check if index file is readable
-            if (not file) std::runtime_error("Unable to open the index file.");
+            if (not file) throw std::runtime_error("Unable to open the index file.");
 
             // Check if the file has the right size
             std::streampos pos = sizeof(index_data) * i;

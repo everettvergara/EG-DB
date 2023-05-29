@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <cstdlib>
 #include "identity.hpp"
 #include "index_data.hpp"
 #include "index.hpp"
@@ -15,7 +15,7 @@ auto main(int, char *[]) -> int
     std::cout << "i: " << i << std::endl;
     auto data = ix.read(i - 1);    
     std::cout << "before write data.pos: " << data.pos << " data.size: " << data.size << " data.active: " << data.active << std::endl; 
-    ix.write(i, eg::index_data{10, 100, true});
+    ix.write(i, eg::index_data{.pos = static_cast<eg::uint_t>(i + rand() % i), .size = static_cast<eg::uint_t>(i + rand() % i), .active = true});
     auto data3 = ix.read(i - 1);
     std::cout << "after data3.pos: " << data3.pos << " data3.size: " << data3.size << " data3.active: " << data3.active << std::endl; 
 
