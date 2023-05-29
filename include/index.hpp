@@ -2,6 +2,7 @@
 
 #include <string>
 #include <fstream>
+#include <tuple>
 #include "common.hpp"
 
 namespace eg
@@ -25,9 +26,9 @@ namespace eg
             index::init_index(index_file_);
         }
 
-        auto update(const uint_t i, const uint_t p, const uint_t s, const bool a = 1)
+        auto write(const uint_t i, const uint_t p, const uint_t s, const bool a = 1)
         {
-            std::ofstream file(index_file_, std::ios::binary | std::ios::app);
+            std::ofstream file(index_file_, std::ios::binary);
 
             // Check if index file is writable
             if (not file) std::runtime_error("Unable to open the index file.");
@@ -40,6 +41,24 @@ namespace eg
             index_data data {.ix = i, .pos = p, .size = s, .active = a};
             file.write(reinterpret_cast<char *>(&data), sizeof(index_data));
             if (file.fail()) std::runtime_error("Unable to write to index file.");
+        }
+
+        auto read(const uint_t i) -> std::tuple<uint_t, uint_t, bool>
+        {
+            std::ifstream file(index_file_, std::ios::binary);
+
+            // Check if index file is readable
+            if (not file) std::runtime_error("Unable to open the index file.");
+
+            // Check if the file has the right size
+            std::streampos pos = sizeof(index_data) * i;
+            file.seekg(pos, std::ios::beg);
+
+            index_data data;
+            file.read(reinterpret_cast<char *>(&data), sizeof(index_data));
+            if (file.fail()) std::runtime_error("Unable to read from index file.");
+
+            return {data.pos, data.size, data.active};
         }
 
     private:
