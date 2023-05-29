@@ -19,11 +19,14 @@ auto main(int, char *[]) -> int
 
     std::cout << "data.pos: " << data.pos << " data.size: " << data.size << " data.active: " << data.active << std::endl; 
 
-    auto vec_data = ix.read_range(0, i);
-    for (auto j = 0; const auto &v : vec_data)
-    {
-        std::cout << j++ << ": data.pos: " << v.pos << " data.size: " << v.size << " data.active: " << v.active << std::endl; 
-    }
+    // auto vec_data = ix.read_range(0, i);
+    // for (auto j = 0; const auto &v : vec_data)
+    // {
+    //     std::cout << j++ << ": data.pos: " << v.pos << " data.size: " << v.size << " data.active: " << v.active << std::endl; 
+    // }
+
+    auto data2 = ix.read(i - 1);
+    std::cout << "data2.pos: " << data2.pos << " data2.size: " << data2.size << " data2.active: " << data2.active << std::endl; 
 
     return 0;
 }
