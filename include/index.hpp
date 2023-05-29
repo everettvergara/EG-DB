@@ -20,18 +20,18 @@ namespace eg
         index(const std::string &table_name)
             : index_file_(table_name + ".ix")
         {
+            index::init_index(index_file_);
         }
 
         auto create(const uint_t i, const uint_t s)
         {
-
         }
 
     private:
 
         const std::string index_file_;
 
-        static auto init_identity(const std::string &index_file)
+        static auto init_index(const std::string &index_file) -> void
         {
             std::ofstream file(index_file, std::ios::binary | std::ios::app);
 
@@ -42,17 +42,10 @@ namespace eg
             file.seekp(0, std::ios::end);
             
             // Check if .id file does not exists
-            if (auto size = file.tellp(); size == 0)
+            auto size = file.tellp();
+            if (size % sizeof(index_data) not_eq 0)
             {
-
-                file.write(reinterpret_cast<const char *>(&ix), sizeof(uint_t));
-                if (file.fail()) std::runtime_error("Unable to write to init identity file.");
-            }
-
-            // Check if the .id file is compatible
-            else if (size % ix not_eq sizeof(uint_t))
-            {
-                std::runtime_error("The existing identity file is incompatible with this version.");
+                std::runtime_error("The existing index file is incompatible with this version.");
             }
         }
 
