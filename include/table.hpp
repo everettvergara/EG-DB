@@ -1,8 +1,5 @@
 #pragma once
 
-#include <fstream>
-#include <memory>
-#include <optional>
 #include <string>
 
 #include "column_attr.hpp"
@@ -17,15 +14,15 @@ namespace eg
     public:
 
         table(const std::string &name)
-            // : name_(name), id_(name_)
+            : name_(name), id_(name_)
         {
-
         }
 
+        
     private:
 
-        // std::string name_;
-        // identity id_;
+        std::string name_;
+        identity    id_;
 
     };
 
