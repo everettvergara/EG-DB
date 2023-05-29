@@ -10,6 +10,7 @@ namespace eg
     struct index_data
     {
         uint_t ix;
+        uint_t pos;
         uint_t size;
     };
 
@@ -23,8 +24,21 @@ namespace eg
             index::init_index(index_file_);
         }
 
-        auto create(const uint_t i, const uint_t s)
+        auto create(const uint_t i, const uint_t p, const uint_t s)
         {
+            std::ofstream file(index_file_, std::ios::binary | std::ios::app);
+
+            // Check if index file is writable
+            if (not file) std::runtime_error("Unable to open the index file.");
+
+            // Check if the file has the right size
+            std::streampos pos = sizeof(index_data) * i;
+            file.seekp(pos, std::ios::beg);
+
+            // Create IX record
+            index_data data {.ix = i, .pos = p, .size = s};
+            file.write(reinterpret_cast<char *>(&data), sizeof(index_data));
+            if (file.fail()) std::runtime_error("Unable to write to index file.");
         }
 
     private:

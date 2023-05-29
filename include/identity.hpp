@@ -72,6 +72,7 @@ namespace eg
             // Get the next id
             uint_t next_id;
             file.read(reinterpret_cast<char *>(&next_id), sizeof(uint_t));
+            if (file.fail()) std::runtime_error("Unable to read from init identity file.");
 
             return next_id;
         }
