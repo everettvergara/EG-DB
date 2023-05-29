@@ -11,6 +11,29 @@ namespace eg
     class identity
     {
     public:
+        identity(const std::string &table_name)
+            :   identity_file_(table_name + ".id"),
+                next_id_(identity::load_identity(identity_file_))
+        {
+        }
+
+        auto get_next_id() -> uint_t 
+        {
+            std::ofstream file(identity_file_, std::ios::binary);
+            if (not file) std::runtime_error("Could not open the identity file.");
+
+            auto curr_id = next_id_++;
+
+            file.write(reinterpret_cast<const char *>(&next_id_), sizeof(uint_t));
+                if (file.fail()) std::runtime_error("Unable to write to init identity file.");
+
+            return curr_id;
+        }
+
+    private:
+
+        const std::string identity_file_;
+        uint_t next_id_;
 
         static auto init_identity(const std::string &identity_file)
         {
@@ -52,29 +75,7 @@ namespace eg
 
             return next_id;
         }
-
-        identity(const std::string &table_name)
-            :   identity_file_(table_name + ".id"),
-                next_id_(identity::load_identity(identity_file_))
-        {
-        }
-
-        auto get_next_id() -> uint_t 
-        {
-            std::ofstream file(identity_file_, std::ios::binary);
-            if (not file) std::runtime_error("Could not open the identity file.");
-
-            auto curr_id = next_id_++;
-
-            file.write(reinterpret_cast<const char *>(&next_id_), sizeof(uint_t));
-                if (file.fail()) std::runtime_error("Unable to write to init identity file.");
-
-            return curr_id;
-        }
-
-    private:
-        const std::string identity_file_;
-        uint_t next_id_;
+                
     };
 }
 
