@@ -12,6 +12,7 @@ namespace eg
         uint_t ix;
         uint_t pos;
         uint_t size;
+        bool   active;
     };
 
     class index
@@ -24,7 +25,7 @@ namespace eg
             index::init_index(index_file_);
         }
 
-        auto create(const uint_t i, const uint_t p, const uint_t s)
+        auto update(const uint_t i, const uint_t p, const uint_t s, const bool a = 1)
         {
             std::ofstream file(index_file_, std::ios::binary | std::ios::app);
 
@@ -36,7 +37,7 @@ namespace eg
             file.seekp(pos, std::ios::beg);
 
             // Create IX record
-            index_data data {.ix = i, .pos = p, .size = s};
+            index_data data {.ix = i, .pos = p, .size = s, .active = a};
             file.write(reinterpret_cast<char *>(&data), sizeof(index_data));
             if (file.fail()) std::runtime_error("Unable to write to index file.");
         }
