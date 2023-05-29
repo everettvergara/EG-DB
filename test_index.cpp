@@ -10,9 +10,11 @@ auto main(int, char *[]) -> int
     eg::identity id("tb_sys_mf_user");
     eg::index ix("tb_sys_mf_user");
 
-    auto i = ix.get_last_ix(); // id.get_next_id();
+    // auto i = id.get_next_id();
+    auto i = ix.get_last_ix() - 1;
 
     std::cout << "i: " << i << std::endl;
+    // ix.write(i, eg::index_data{i * 10, i * 10, 1});
     auto data1 = ix.read(i);
     auto data2 = ix.read(i);
     auto data3 = ix.read(i);

@@ -48,7 +48,6 @@ namespace eg
             // Create IX record
             std::cout << "write: " << data.pos << " " << data.size << " " << data.active << std::endl;
             file.write(reinterpret_cast<const char *>(&data), sizeof(index_data));
-            
             if (file.fail()) throw std::runtime_error("Unable to write to index file.");
         }
 
