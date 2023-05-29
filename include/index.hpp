@@ -19,7 +19,22 @@ namespace eg
             index::init_index(index_file_);
         }
 
-        auto write(const uint_t i, const index_data &data)
+        auto get_last_ix() const -> uint_t
+        {
+            std::ifstream file(index_file_, std::ios::binary | std::ios::ate);
+
+            // Check if index file is readable
+            if (not file) throw std::runtime_error("Unable to open the index file.");
+
+            file.seekg(0, std::ios::end);
+            auto pos = file.tellg();
+
+            if (pos % sizeof(index_data) not_eq 0) throw std::runtime_error("Incompatible version of index file.");
+        
+            return pos / sizeof(index_data) - 1;
+        }
+
+        auto write(const uint_t i, const index_data &data) const 
         {
             std::ofstream file(index_file_, std::ios::binary);
 
@@ -37,7 +52,7 @@ namespace eg
             if (file.fail()) throw std::runtime_error("Unable to write to index file.");
         }
 
-        auto read(const uint_t i) -> index_data
+        auto read(const uint_t i) const -> index_data
         {
             std::ifstream file(index_file_, std::ios::binary);
 
@@ -56,7 +71,7 @@ namespace eg
         }
 
 
-        auto read_range(const uint_t i, const uint_t j) -> std::vector<index_data>
+        auto read_range(const uint_t i, const uint_t j) const -> std::vector<index_data>
         {
             std::ifstream file(index_file_, std::ios::binary);
 
