@@ -2,6 +2,7 @@
 
 #include <string>
 #include <fstream>
+#include <vector>
 
 #include "common.hpp"
 #include "index_data.hpp"
@@ -48,6 +49,29 @@ namespace eg
 
             index_data data;
             file.read(reinterpret_cast<char *>(&data), sizeof(index_data));
+            if (file.fail()) std::runtime_error("Unable to read from index file.");
+
+            return data;
+        }
+
+
+        auto read_range(const uint_t i, const uint_t j) -> std::vector<index_data>
+        {
+            std::ifstream file(index_file_, std::ios::binary);
+
+            // Check if index file is readable
+            if (not file) std::runtime_error("Unable to open the index file.");
+
+            // Check if the file has the right size
+            std::streampos pos = sizeof(index_data) * i;
+            file.seekg(pos, std::ios::beg);
+
+            std::streampos pos_end = sizeof(index_data) * (j + 1);
+            std::streampos to_read = pos_end - pos;
+
+            std::vector<index_data> data;
+            data.resize(j - i + 1);
+            file.read(reinterpret_cast<char *>(data.data()), to_read);
             if (file.fail()) std::runtime_error("Unable to read from index file.");
 
             return data;
