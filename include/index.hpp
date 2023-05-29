@@ -4,18 +4,10 @@
 #include <fstream>
 #include <tuple>
 #include "common.hpp"
+#include "index_data.hpp"
 
 namespace eg
 {
-
-    struct index_data
-    {
-        uint_t ix;
-        uint_t pos;
-        uint_t size;
-        bool   active;
-    };
-
     class index
     {
     public:
