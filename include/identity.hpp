@@ -20,12 +20,12 @@ namespace eg
         auto get_next_id() -> uint_t 
         {
             std::ofstream file(identity_file_, std::ios::binary);
-            if (not file) std::runtime_error("Could not open the identity file.");
+            if (not file) throw std::runtime_error("Could not open the identity file.");
 
             auto curr_id = next_id_++;
 
             file.write(reinterpret_cast<const char *>(&next_id_), sizeof(uint_t));
-                if (file.fail()) std::runtime_error("Unable to write to init identity file.");
+                if (file.fail()) throw std::runtime_error("Unable to write to init identity file.");
 
             return curr_id;
         }
@@ -40,7 +40,7 @@ namespace eg
             std::ofstream file(identity_file, std::ios::binary | std::ios::app);
 
             // Check if index file is writable
-            if (not file) std::runtime_error("Unable to open the identity file.");
+            if (not file) throw std::runtime_error("Unable to open the identity file.");
 
             // Check if the file has the right size
             file.seekp(0, std::ios::end);
@@ -50,13 +50,13 @@ namespace eg
             {
                 uint_t init = 0;
                 file.write(reinterpret_cast<const char *>(&init), sizeof(uint_t));
-                if (file.fail()) std::runtime_error("Unable to write to init identity file.");
+                if (file.fail()) throw std::runtime_error("Unable to write to init identity file.");
             }
 
             // Check if the .id file is compatible
             else if (size not_eq sizeof(uint_t))
             {
-                std::runtime_error("The existing identity file is incompatible with this version.");
+                throw std::runtime_error("The existing identity file is incompatible with this version.");
             }
         }
 
