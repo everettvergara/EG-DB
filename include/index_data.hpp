@@ -10,6 +10,11 @@ namespace eg
         uint_t size;
         bool   active;
 
+        index_data()
+            : pos(0), size(0), active(false)
+        {
+        }
+        
         index_data(const uint_t p, const uint_t s, const uint_t a)
             : pos(p), size(s), active(a)
         {

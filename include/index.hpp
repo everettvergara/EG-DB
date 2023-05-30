@@ -67,7 +67,7 @@ namespace eg
             file.seekg(pos, std::ios::beg);
 
             index_data data;
-            file.read(reinterpret_cast<char *>(&data), sizeof(index_data));
+            file.read(reinterpret_cast<char *>(&data), sizeof(data));
             if (file.fail()) throw std::runtime_error("Unable to read from index file.");
 
             if (not data.active) return {};
@@ -76,7 +76,7 @@ namespace eg
         }
 
 
-        auto read_range(const uint_t i, uint_t j) const -> std::vector<index_data>
+        auto read_range(uint_t i, uint_t j) const -> std::vector<index_data>
         {
             auto max = get_last_ix();
             j = std::min(max, j);
@@ -94,14 +94,16 @@ namespace eg
             // std::streampos to_read = pos_end - pos;
 
             std::vector<index_data> data;
+            index_data d;
             while (i <= j)
             {
+                file.read(reinterpret_cast<char *>(&d), sizeof(d));
+                if (d.active)
+                    data.emplace_back(d.pos, d.size, d.active);
                 
-                // data.emplace_back();
-                // file.read(reinterpret_cast<char *>(data.data()), to_read);
+                ++i;
             }
-            // data.resize(j - i + 1);
-            // file.read(reinterpret_cast<char *>(data.data()), to_read);
+            
             if (file.fail()) throw std::runtime_error("Unable to read from index file.");
 
             return data;
@@ -124,7 +126,7 @@ namespace eg
             // Check if .id file does not exists
             if (auto size = file.tellp(); size == 0)
             {
-                index_data data {.pos = 0, .size = 0, .active = 0};
+                index_data data(0, 0, false);
                 file.write(reinterpret_cast<const char *>(&data), sizeof(index_data));
                 if (file.fail()) throw std::runtime_error("Unable to write to index file.");
             }
