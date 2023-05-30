@@ -16,9 +16,9 @@ auto main(int, char *[]) -> int
     ix.write(7, d);
     
     auto vec_data = ix.read_range(0, i+2);
-    for (auto j = 0; const auto &v : vec_data)
+    for (const auto &v : vec_data)
     {
-        std::cout << j++ << ": data.pos: " << v.pos << " data.size: " << v.size << " data.active: " << v.active << std::endl; 
+        std::cout << v.ix << ": data.pos: " << v.data.pos << " data.size: " << v.data.size << " data.active: " << v.data.active << std::endl; 
     }
 
     return 0;

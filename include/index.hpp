@@ -77,7 +77,7 @@ namespace eg
         }
 
 
-        auto read_range(uint_t i, uint_t j) const -> std::vector<index_data>
+        auto read_range(uint_t i, uint_t j) const -> std::vector<full_index_data>
         {
             auto max = get_last_ix();
             j = std::min(max, j);

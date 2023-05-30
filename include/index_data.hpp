@@ -26,6 +26,11 @@ namespace eg
         uint_t      ix;
         index_data  data;
 
+        full_index_data()
+            : ix(0)
+        {
+        }
+
         full_index_data(const uint_t i, const index_data d)
             : ix(i), data(d)
         {
