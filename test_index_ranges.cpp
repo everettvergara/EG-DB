@@ -12,8 +12,8 @@ auto main(int, char *[]) -> int
 
     auto i = ix.get_last_ix();
 
-    eg::index_data d(0, 0, 0);
-    ix.write(7, d);
+    // eg::index_data d(0, 0, 0);
+    // ix.write(7, d);
     
     auto vec_data = ix.read_range(0, i+2);
     for (const auto &v : vec_data)

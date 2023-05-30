@@ -4,6 +4,12 @@
 
 namespace eg
 {
+    /*
+        optimize by removing active and adding prev and next.
+
+        implement index_data as list and at the same time a hash map
+    
+    */
     struct index_data
     {
         uint_t pos;
