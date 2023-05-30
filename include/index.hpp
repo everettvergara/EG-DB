@@ -3,6 +3,7 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <optional>
 
 #include "common.hpp"
 #include "index_data.hpp"
@@ -51,8 +52,11 @@ namespace eg
             if (file.fail()) throw std::runtime_error("Unable to write to index file.");
         }
 
-        auto read(const uint_t i) const -> index_data
+        auto read(const uint_t i) const -> std::optional<index_data>
         {
+            auto max = get_last_ix();
+            if (i > max) return {};
+
             std::ifstream file(index_file_, std::ios::binary);
 
             // Check if index file is readable
@@ -65,6 +69,8 @@ namespace eg
             index_data data;
             file.read(reinterpret_cast<char *>(&data), sizeof(index_data));
             if (file.fail()) throw std::runtime_error("Unable to read from index file.");
+
+            if (not data.active) return {};
 
             return data;
         }
@@ -84,12 +90,18 @@ namespace eg
             std::streampos pos = sizeof(index_data) * i;
             file.seekg(pos, std::ios::beg);
 
-            std::streampos pos_end = sizeof(index_data) * (j + 1);
-            std::streampos to_read = pos_end - pos;
+            // std::streampos pos_end = sizeof(index_data) * (j + 1);
+            // std::streampos to_read = pos_end - pos;
 
             std::vector<index_data> data;
-            data.resize(j - i + 1);
-            file.read(reinterpret_cast<char *>(data.data()), to_read);
+            while (i <= j)
+            {
+                
+                // data.emplace_back();
+                // file.read(reinterpret_cast<char *>(data.data()), to_read);
+            }
+            // data.resize(j - i + 1);
+            // file.read(reinterpret_cast<char *>(data.data()), to_read);
             if (file.fail()) throw std::runtime_error("Unable to read from index file.");
 
             return data;
