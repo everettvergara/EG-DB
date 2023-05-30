@@ -25,5 +25,5 @@ namespace eg
     {
         uint_t      ix;
         index_data  data;
-    }
+    };
 }

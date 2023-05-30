@@ -52,7 +52,7 @@ namespace eg
             if (file.fail()) throw std::runtime_error("Unable to write to index file.");
         }
 
-        auto read(const uint_t i) const -> std::optional<index_data>
+        auto read(const uint_t i) const -> std::optional<full_index_data>
         {
             auto max = get_last_ix();
             if (i > max) return {};
@@ -66,13 +66,14 @@ namespace eg
             std::streampos pos = sizeof(index_data) * i;
             file.seekg(pos, std::ios::beg);
 
-            index_data data;
-            file.read(reinterpret_cast<char *>(&data), sizeof(data));
+            full_index_data fdata;
+            file.read(reinterpret_cast<char *>(&fdata.data), sizeof(fdata.data));
             if (file.fail()) throw std::runtime_error("Unable to read from index file.");
 
-            if (not data.active) return {};
+            if (not fdata.data.active) return {};
 
-            return data;
+            fdata.ix = i;
+            return fdata;
         }
 
 
