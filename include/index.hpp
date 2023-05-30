@@ -36,7 +36,7 @@ namespace eg
 
         auto write(const uint_t i, const index_data &data) const 
         {
-            std::ofstream file(index_file_, std::ios::binary);
+            std::fstream file(index_file_, std::ios::binary | std::ios::in | std::ios::out);
 
             // Check if index file is writable
             if (not file) throw std::runtime_error("Unable to open the index file.");

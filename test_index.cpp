@@ -11,7 +11,7 @@ auto main(int, char *[]) -> int
     eg::index ix("tb_sys_mf_user");
 
     // auto i = id.get_next_id();
-    auto i = ix.get_last_ix() - 1;
+    auto i = ix.get_last_ix();
 
     std::cout << "i: " << i << std::endl;
     // ix.write(i, eg::index_data{i * 10, i * 10, 1});
