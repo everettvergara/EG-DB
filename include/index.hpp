@@ -94,14 +94,12 @@ namespace eg
             // std::streampos pos_end = sizeof(index_data) * (j + 1);
             // std::streampos to_read = pos_end - pos;
 
-            std::vector<index_data> data;
+            std::vector<full_index_data> data;
             index_data d;
             while (i <= j)
             {
                 file.read(reinterpret_cast<char *>(&d), sizeof(d));
-                if (d.active)
-                    data.emplace_back(d.pos, d.size, d.active);
-                
+                if (d.active) data.emplace_back(i, d);
                 ++i;
             }
             
