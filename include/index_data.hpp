@@ -8,21 +8,30 @@ namespace eg
         optimize by removing active and adding prev and next.
 
         implement index_data as list and at the same time a hash map
-    
+
+
+        next = MAX
+        prev = MAX
+
     */
+
+   
+
     struct index_data
     {
         uint_t pos;
         uint_t size;
-        bool   active;
+        uint_t next;
+        uint_t prev;
+        // bool   active;
 
         index_data()
-            : pos(0), size(0), active(false)
+            : pos(0), size(0) --, active(false)
         {
         }
 
         index_data(const uint_t p, const uint_t s, const uint_t a)
-            : pos(p), size(s), active(a)
+            : pos(p), size(s) --, active(a)
         {
         }
     };
