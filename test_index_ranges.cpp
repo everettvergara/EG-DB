@@ -13,7 +13,7 @@ auto main(int, char *[]) -> int
     auto i = ix.get_last_ix();
 
     
-    auto vec_data = ix.read_range(0, i);
+    auto vec_data = ix.read_range(0, i+2);
     for (auto j = 0; const auto &v : vec_data)
     {
         std::cout << j++ << ": data.pos: " << v.pos << " data.size: " << v.size << " data.active: " << v.active << std::endl; 

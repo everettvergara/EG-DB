@@ -70,8 +70,11 @@ namespace eg
         }
 
 
-        auto read_range(const uint_t i, const uint_t j) const -> std::vector<index_data>
+        auto read_range(const uint_t i, uint_t j) const -> std::vector<index_data>
         {
+            auto max = get_last_ix();
+            j = std::min(max, j);
+
             std::ifstream file(index_file_, std::ios::binary);
 
             // Check if index file is readable
