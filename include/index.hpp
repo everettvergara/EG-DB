@@ -22,7 +22,7 @@ namespace eg
             index::init_index(index_file_);
         }
 
-        auto get_last_ix() const -> std::optional<uint_t>
+        auto get_file_read_handler_and_validate() const -> std::ifstream
         {
             std::ifstream file(index_file_, std::ios::binary | std::ios::ate);
 
@@ -36,6 +36,13 @@ namespace eg
             if (pos == 0) throw std::runtime_error("Invalid ix file.");
 
             file.seekg(0, std::ios::beg);
+
+            return file;
+        }
+
+        auto get_last_ix() const -> std::optional<uint_t>
+        {
+            auto file = get_file_read_handler_and_validate();
 
             index_data data;
             file.read(reinterpret_cast<char *>(&data), sizeof(data));
@@ -47,18 +54,7 @@ namespace eg
 
         auto get_first_ix() const -> std::optional<uint_t>
         {
-            std::ifstream file(index_file_, std::ios::binary | std::ios::ate);
-
-            // Check if index file is readable
-            if (not file) throw std::runtime_error("Unable to open the index file.");
-
-            file.seekg(0, std::ios::end);
-            auto pos = file.tellg();
-
-            if (pos % sizeof(index_data) not_eq 0) throw std::runtime_error("Incompatible version of index file.");
-            if (pos == 0) throw std::runtime_error("Invalid ix file.");
-
-            file.seekg(0, std::ios::beg);
+            auto file = get_file_read_handler_and_validate();
 
             index_data data;
             file.read(reinterpret_cast<char *>(&data), sizeof(data));
