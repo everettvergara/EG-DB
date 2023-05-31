@@ -12,7 +12,9 @@ namespace eg
 {
     class index
     {
+
     public:
+
 
         index(const std::string &table_name)
             : index_file_(table_name + ".ix")
@@ -125,8 +127,7 @@ namespace eg
             // Check if .id file does not exists
             if (auto size = file.tellp(); size == 0)
             {
-                index_data data(0, 0, false);
-                file.write(reinterpret_cast<const char *>(&data), sizeof(index_data));
+                file.write(reinterpret_cast<const char *>(&data), sizeof(data));
                 if (file.fail()) throw std::runtime_error("Unable to write to index file.");
             }
 

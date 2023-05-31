@@ -4,16 +4,6 @@
 
 namespace eg
 {
-    /*
-        optimize by removing active and adding prev and next.
-
-        implement index_data as list and at the same time a hash map
-
-
-        next = 0
-        prev = 0
-
-    */
 
     struct index_data
     {
