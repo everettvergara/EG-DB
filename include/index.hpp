@@ -33,11 +33,16 @@ namespace eg
             auto pos = file.tellg();
 
             if (pos % sizeof(index_data) not_eq 0) throw std::runtime_error("Incompatible version of index file.");
-        
-            uint_t last_ix = pos / sizeof(index_data) - 1;
-            if (last_ix == 0) return {};
+            if (pos == 0) throw std::runtime_error("Invalid ix file.");
 
-            return last_ix;
+            file.seekg(0, std::ios::beg);
+
+            index_data data;
+            file.read(reinterpret_cast<char *>(&data), sizeof(data));
+
+            if (data.prev == 0) return {};
+
+            return data.prev;
         }
 
         auto write(const uint_t i, const index_data &data) const 
