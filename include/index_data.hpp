@@ -10,12 +10,10 @@ namespace eg
         implement index_data as list and at the same time a hash map
 
 
-        next = MAX
-        prev = MAX
+        next = 0
+        prev = 0
 
     */
-
-   
 
     struct index_data
     {
@@ -23,15 +21,14 @@ namespace eg
         uint_t size;
         uint_t next;
         uint_t prev;
-        // bool   active;
 
         index_data()
-            : pos(0), size(0) --, active(false)
+            : pos(0), size(0), next(0), prev(0)
         {
         }
 
-        index_data(const uint_t p, const uint_t s, const uint_t a)
-            : pos(p), size(s) --, active(a)
+        index_data(const uint_t p, const uint_t s, const uint_t nx, const uint_t pv)
+            : pos(p), size(s), next(nx), prev(pv)
         {
         }
     };
