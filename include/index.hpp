@@ -125,13 +125,14 @@ namespace eg
             file.seekp(0, std::ios::end);
             
             // Check if .id file does not exists
+            index_data data;
             if (auto size = file.tellp(); size == 0)
             {
                 file.write(reinterpret_cast<const char *>(&data), sizeof(data));
                 if (file.fail()) throw std::runtime_error("Unable to write to index file.");
             }
 
-            else if (size % sizeof(index_data) not_eq 0)
+            else if (size % sizeof(data) not_eq 0)
             {
                 throw std::runtime_error("The existing index file is incompatible with this version.");
             }
