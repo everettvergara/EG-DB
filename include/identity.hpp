@@ -54,7 +54,7 @@ namespace eg
             if (auto size = file.tellp(); size == 0)
             {
                 uint_t init = 0;
-                file.write(reinterpret_cast<const char *>(&init), sizeof(uint_t));
+                file.write(reinterpret_cast<const char *>(&init), sizeof(init));
                 if (file.fail()) throw std::runtime_error("Unable to write to init identity file.");
             }
 
@@ -75,11 +75,11 @@ namespace eg
             if (not file) std::runtime_error("Could not open the identity file.");
 
             // Get the next id
-            uint_t next_id;
-            file.read(reinterpret_cast<char *>(&next_id), sizeof(uint_t));
+            uint_t curr_id;
+            file.read(reinterpret_cast<char *>(&curr_id), sizeof(curr_id));
             if (file.fail()) std::runtime_error("Unable to read from init identity file.");
 
-            return next_id;
+            return curr_id;
         }
                 
     };
