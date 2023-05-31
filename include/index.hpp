@@ -22,7 +22,7 @@ namespace eg
             index::init_index(index_file_);
         }
 
-        auto get_last_ix() const -> uint_t
+        auto get_last_ix() const -> std::optional<uint_t>
         {
             std::ifstream file(index_file_, std::ios::binary | std::ios::ate);
 
@@ -34,7 +34,10 @@ namespace eg
 
             if (pos % sizeof(index_data) not_eq 0) throw std::runtime_error("Incompatible version of index file.");
         
-            return pos / sizeof(index_data) - 1;
+            uint_t last_ix = pos / sizeof(index_data) - 1;
+            if (last_ix == 0) return {};
+
+            return last_ix;
         }
 
         auto write(const uint_t i, const index_data &data) const 
@@ -137,7 +140,6 @@ namespace eg
                 throw std::runtime_error("The existing index file is incompatible with this version.");
             }
         }
-
     };
 
 }
