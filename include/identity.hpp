@@ -17,17 +17,18 @@ namespace eg
         {
         }
 
+
         auto get_next_id() -> uint_t 
         {
             std::ofstream file(identity_file_, std::ios::binary);
             if (not file) throw std::runtime_error("Could not open the identity file.");
 
-            auto curr_id = next_id_++;
+            ++next_id_;
 
             file.write(reinterpret_cast<const char *>(&next_id_), sizeof(uint_t));
                 if (file.fail()) throw std::runtime_error("Unable to write to init identity file.");
 
-            return curr_id;
+            return next_id_;
         }
 
     private:
