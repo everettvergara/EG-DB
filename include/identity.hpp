@@ -13,28 +13,32 @@ namespace eg
     public:
         identity(const std::string &table_name)
             :   identity_file_(table_name + ".id"),
-                next_id_(identity::load_identity(identity_file_))
+                curr_id_(identity::load_identity(identity_file_))
         {
         }
 
+        auto get_curr_id() -> uint_t
+        {
+            return curr_id_;
+        }
 
         auto get_next_id() -> uint_t 
         {
             std::ofstream file(identity_file_, std::ios::binary);
             if (not file) throw std::runtime_error("Could not open the identity file.");
 
-            ++next_id_;
+            ++curr_id_;
 
-            file.write(reinterpret_cast<const char *>(&next_id_), sizeof(uint_t));
+            file.write(reinterpret_cast<const char *>(&curr_id_), sizeof(uint_t));
                 if (file.fail()) throw std::runtime_error("Unable to write to init identity file.");
 
-            return next_id_;
+            return curr_id_;
         }
 
     private:
 
         const std::string identity_file_;
-        uint_t next_id_;
+        uint_t curr_id_;
 
         static auto init_identity(const std::string &identity_file)
         {
