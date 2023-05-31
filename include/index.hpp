@@ -45,6 +45,30 @@ namespace eg
             return data.prev;
         }
 
+        auto get_first_ix() const -> std::optional<uint_t>
+        {
+            std::ifstream file(index_file_, std::ios::binary | std::ios::ate);
+
+            // Check if index file is readable
+            if (not file) throw std::runtime_error("Unable to open the index file.");
+
+            file.seekg(0, std::ios::end);
+            auto pos = file.tellg();
+
+            if (pos % sizeof(index_data) not_eq 0) throw std::runtime_error("Incompatible version of index file.");
+            if (pos == 0) throw std::runtime_error("Invalid ix file.");
+
+            file.seekg(0, std::ios::beg);
+
+            index_data data;
+            file.read(reinterpret_cast<char *>(&data), sizeof(data));
+
+            if (data.next == 0) return {};
+
+            return data.next;
+        }
+
+
         auto write(const uint_t i, const index_data &data) const 
         {
             std::fstream file(index_file_, std::ios::binary | std::ios::in | std::ios::out);
