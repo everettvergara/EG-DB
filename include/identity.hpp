@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <string>
 #include <fstream>
+#include <optional>
 
 #include "common.hpp"
 
@@ -17,8 +18,10 @@ namespace eg
         {
         }
 
-        auto get_curr_id() -> uint_t
+        auto get_curr_id() -> std::optional<uint_t>
         {
+            if (curr_id_ == 0) return {};
+
             return curr_id_;
         }
 
