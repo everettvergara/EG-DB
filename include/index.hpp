@@ -64,6 +64,10 @@ namespace eg
             return data.next;
         }
 
+        auto get_next_ix(uint_t i) const -> std::optional<uint_t>
+        {
+            return {};
+        }
 
         auto write(const uint_t i, const index_data &data) const 
         {

@@ -11,14 +11,15 @@ namespace eg
         uint_t size;
         uint_t next;
         uint_t prev;
+        bool   active;
 
         index_data()
-            : pos(0), size(0), next(0), prev(0)
+            : pos(0), size(0), next(0), prev(0), active(0)
         {
         }
 
-        index_data(const uint_t p, const uint_t s, const uint_t nx, const uint_t pv)
-            : pos(p), size(s), next(nx), prev(pv)
+        index_data(const uint_t p, const uint_t s, const uint_t nx, const uint_t pv, const bool a)
+            : pos(p), size(s), next(nx), prev(pv), active(a)
         {
         }
     };
