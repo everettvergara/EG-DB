@@ -52,8 +52,9 @@ namespace eg
             active.resize(size);
             active_size = 0;
 
+            // Inactive contains 0xffff to 0;
             inactive.reserve(size);
-            for (size_t i = 0; i < size; ++i)
+            for (size_t i = 0xfffe; i >=0 size; --i)
                 inactive.emplace_back(i);
             inactive_size = inactive.size();
         }
