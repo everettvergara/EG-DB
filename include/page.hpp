@@ -7,6 +7,24 @@
 namespace eg
 {
 
+    struct page_data
+    {
+
+    };
+
+    struct page
+    {
+
+    };
+
+
+
+    struct page_master_data
+    {
+        uint_t rows_per_page_;
+        uint_t last_page_;
+    };
+
     class page_master
     {
     public:
@@ -16,9 +34,19 @@ namespace eg
         {
         }
 
+        auto init_page_master()
+        {
+        }
+
+        auto get_page_no(const uint_t r) -> uint_t
+        {
+        }
+
+
+
     private:
-        std::string page_master_file_;
-        uint_t rows_per_page_;
-        uint_t last_page_;
+        std::string         page_master_file_;
+        page_master_data    data_;
+
     };
 }
