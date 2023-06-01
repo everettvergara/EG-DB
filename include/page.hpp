@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include <string>
 #include <filesystem>
 #include "common.hpp"
@@ -7,9 +8,16 @@
 namespace eg
 {
 
+    enum struct page_data_status : uint_t
+    {
+        active, deleted
+    };
+
     struct page_data
     {
-
+        std::vector<page_data_status> status;
+        std::vector<uint_t> active;
+        std::vector<uint_t> deleted;
     };
 
     struct page
