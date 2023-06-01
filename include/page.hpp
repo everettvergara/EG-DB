@@ -8,7 +8,7 @@
 
 namespace eg
 {
-    
+    /*
     struct inactive_alloc : std::allocator<uint16_t>
     {
         auto allocate(size_t n) -> uint16_t *
@@ -26,7 +26,7 @@ namespace eg
             std::allocator<uint16_t>::deallocate(p, n);
         }
     };
-
+    */
 
     enum struct page_data_status : uint8_t
     {
@@ -43,17 +43,23 @@ namespace eg
         std::vector<uint16_t>   inactive;
         uint16_t                inactive_size;
 
-        page_data()
-            :   active(0xffff, 0),
-                active_size(0)
+        auto init_page_data()
         {
+            size_t size = sizeof(uint16_t) * 8;
 
-            inactive.reserve(0xffff);
-            for (uint32_t i = 0; i < 0xffff; ++i)
+            status.resize(size, page_data_status::inactive);
+
+            active.resize(size);
+            active_size = 0;
+
+            inactive.reserve(size);
+            for (size_t i = 0; i < size; ++i)
                 inactive.emplace_back(i);
             inactive_size = inactive.size();
+        }
 
-            
+        page_data()
+        {
         }
     };
 
