@@ -3,12 +3,32 @@
 #include <vector>
 #include <string>
 #include <filesystem>
+#include <memory>
 #include "common.hpp"
 
 namespace eg
 {
+    
+    struct inactive_alloc : std::allocator<uint16_t>
+    {
+        auto allocate(size_t n) -> uint16_t *
+        {
+            auto *p = std::allocator<uint16_t>::allocate(n);
 
-    enum struct page_data_status : uint_t
+            for (size_t i = 0; i < 0xffff; ++i)
+                p[i] = static_cast<uint16_t>(i);
+
+            return p;
+        }
+
+        auto deallocate(uint16_t *p, size_t n)
+        {
+            std::allocator<uint16_t>::deallocate(p, n);
+        }
+    };
+
+
+    enum struct page_data_status : uint8_t
     {
         active, inactive, deleted, locked
     };
@@ -17,11 +37,24 @@ namespace eg
     {
         std::vector<page_data_status> status;
         
-        uint_t active_size;
-        std::vector<uint_t> active;
-        
-        uint_t inactive_size;
-        std::vector<uint_t> inactive;
+        std::vector<uint16_t>   active;
+        uint16_t                active_size;
+
+        std::vector<uint16_t>   inactive;
+        uint16_t                inactive_size;
+
+        page_data()
+            :   active(0xffff, 0),
+                active_size(0)
+        {
+
+            inactive.reserve(0xffff);
+            for (uint32_t i = 0; i < 0xffff; ++i)
+                inactive.emplace_back(i);
+            inactive_size = inactive.size();
+
+            
+        }
     };
 
     class page
