@@ -10,19 +10,26 @@ namespace eg
 
     enum struct page_data_status : uint_t
     {
-        active, deleted
+        active, inactive, deleted, locked
     };
 
     struct page_data
     {
         std::vector<page_data_status> status;
+        
+        uint_t active_size;
         std::vector<uint_t> active;
-        std::vector<uint_t> deleted;
+        
+        uint_t inactive_size;
+        std::vector<uint_t> inactive;
     };
 
-    struct page
+    class page
     {
+    public:
 
+    private:
+        page_data data_;
     };
 
 
