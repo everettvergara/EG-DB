@@ -16,10 +16,7 @@ namespace eg
     public:
 
         row(std::initializer_list<column> columns)
-            :   id_(column_attr {   .name = "id", 
-                                    .max_size = sizeof(uint_t), 
-                                    .is_varsize = false}),
-                columns_(columns)
+            :   columns_(columns)
         {
             for (uint_t i = 0; auto c : columns_)
                 cardinality_.try_emplace(c.get_name(), i++); 
