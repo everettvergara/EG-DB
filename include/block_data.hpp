@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
+#include <type_traits>
 
 #include "common.hpp"
 #include "raw.hpp"
@@ -14,6 +15,8 @@ namespace eg
     template <typename T>
     auto save_block_data(const std::string &filename, const T &data, const uint_t i)
     {
+        static_assert(std::is_trivially_copyable_v<T>, "Datastruct too complex.");
+
         // Assumes file already exists, even if it's 0 bytes.
         // Otherwise it will fail.
         std::fstream file(filename, std::ios::binary | std::ios::in | std::ios::out);
@@ -35,6 +38,8 @@ namespace eg
     template <typename T>
     auto load_block_data(const std::string &filename, const uint_t i) -> T
     {
+        static_assert(std::is_trivially_copyable_v<T>, "Datastruct too complex.");
+
         // Assumes file already exists, even if it's 0 bytes.
         // Otherwise it will fail.
         std::ifstream file(filename, std::ios::binary);
