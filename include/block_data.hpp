@@ -31,4 +31,14 @@ namespace eg
         file.write(reinterpret_cast<const char *>(&data), sizeof(T));
         if (file.fail()) throw std::runtime_error("Could not write to the file block size.");
     }
+
+    template <typename T>
+    auto load_block_data(const std::string &filename, const uint_t i) -> T
+    {
+        T data;
+
+
+        return data;
+
+    }
 }
