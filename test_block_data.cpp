@@ -25,15 +25,16 @@ auto main(int, char *[]) -> int
         auto data2 = load_block_data<data_sample>("block_data_sample.data", 1);
         std::cout << "data2." << data2.x << std::endl;    
 
-        // auto data3 = load_block_data<data_sample>("block_data_sample.data", 2);
-        // std::cout << "data3." << data3.x << std::endl;    
+        data_sample data3 {.x = 200, .y = 200};
+        save_block_data<data_sample>("block_data_sample.data", data3, 2);
+        auto data33 = load_block_data<data_sample>("block_data_sample.data", 2);
+        std::cout << "data33." << data33.x << std::endl;
+        auto data44 = load_block_data<data_sample>("block_data_sample.data", 3);
+        std::cout << "data44." << data44.x << std::endl;
+
     }
 
-    // auto data3 = load_block_data<data_sample>("block_data_sample.data", 10);
-    // std::cout << "data3." << data3.x << std::endl;
 
-    // auto data4 = load_block_data<data_sample>("block_data_sample.data", 11);
-    // std::cout << "data4." << data4.x << std::endl;
 
 
 
