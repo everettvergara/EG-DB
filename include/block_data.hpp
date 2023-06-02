@@ -1,26 +1,33 @@
 #pragma once
 
+#include <cstdint> 
+#include <iostream>
 #include <fstream>
+#include <stdexcept>
 
 #include "common.hpp"
+#include "raw.hpp"
 
 namespace eg
 {
 
-    struct block_data
+    template <typename T>
+    auto save_block_data(const std::string &filename, const T &data, const uint_t i)
     {
+        // Assumes file already exists, even if it's 0 bytes.
+        // Otherwise it will fail.
+        std::fstream file(filename, std::ios::binary | std::ios::in | std::ios::out);
+        if (not file) throw std::runtime_error("Could not open the block file.");
 
+        // Check if the file has the right size
+        file.seekp(0, std::ios::end);
+        if (file.fail()) throw std::runtime_error("Could not get the file block size.");
+
+        // Check if version is compatible
+        auto file_size = file.tellp();
+        if (file_size % sizeof(T) not_eq 0) throw std::runtime_error("Version of block size is incompatible.");
         
 
-        auto get_size()
-        {
-            auto s = sizeof(*this);
 
-
-            return s;
-        }
-    };
-
-    
-
+    }
 }
