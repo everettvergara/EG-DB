@@ -25,8 +25,8 @@ auto main(int, char *[]) -> int
         auto data2 = load_block_data<data_sample>("block_data_sample.data", 1);
         std::cout << "data2." << data2.x << std::endl;    
 
-        auto data3 = load_block_data<data_sample>("block_data_sample.data", 3);
-        std::cout << "data3." << data3.x << std::endl;    
+        // auto data3 = load_block_data<data_sample>("block_data_sample.data", 2);
+        // std::cout << "data3." << data3.x << std::endl;    
     }
 
     // auto data3 = load_block_data<data_sample>("block_data_sample.data", 10);
