@@ -27,7 +27,8 @@ namespace eg
         auto file_size = file.tellp();
         if (file_size % sizeof(T) not_eq 0) throw std::runtime_error("Version of block size is incompatible.");
         
-
-
+        file.seekp(i * sizeof(T), std::ios::end);
+        file.write(reinterpret_cast<const char *>(&data), sizeof(T));
+        if (file.fail()) throw std::runtime_error("Could not write to the file block size.");
     }
 }
