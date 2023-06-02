@@ -5,6 +5,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <type_traits>
+#include <filesystem>
 
 #include "common.hpp"
 #include "raw.hpp"
@@ -16,6 +17,10 @@ namespace eg
     auto save_block_data(const std::string &filename, const T &data, const uint_t i)
     {
         static_assert(std::is_trivially_copyable_v<T>, "Datastruct too complex.");
+
+        // Create the file if it does not exists
+        if (not std::filesystem::exists(filename)) 
+            std::ofstream file(filename, std::ios::binary);
 
         // Assumes file already exists, even if it's 0 bytes.
         // Otherwise it will fail.
