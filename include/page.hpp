@@ -63,58 +63,16 @@ namespace eg
 
         auto save(const std::string &filename, const uint_t i)
         {
-            save_block_data<page>(filename, *this, i);
+            write_block_data<page>(filename, *this, i);
         }
 
         auto load(const std::string &filename, const uint_t i)
         {
-            *this = load_block_data<page>(filename, i);
+            *this = read_block_data<page>(filename, i);
         }
     };
 
 /*
-    struct page_data
-    {
-        std::vector<page_data_status> status;
-        
-        std::vector<uint16_t>   active;
-        uint16_t                active_size;
-
-        std::vector<uint16_t>   inactive;
-        uint16_t                inactive_size;
-
-        auto init_page_data()
-        {
-            size_t size = sizeof(uint16_t) * 8;
-
-            status.resize(size, page_data_status::inactive);
-
-            active.resize(size);
-            active_size = 0;
-
-            // Inactive contains 0xffff to 0;
-            inactive.reserve(size);
-            for (size_t i = 0xfffe; i >=0 size; --i)
-                inactive.emplace_back(i);
-            inactive_size = inactive.size();
-        }
-
-        page_data()
-        {
-        }
-    };
-
-
-    class page
-    {
-    public:
-
-    private:
-        page_data data_;
-    };
-
-
-
     struct page_master_data
     {
         uint_t rows_per_page_;
