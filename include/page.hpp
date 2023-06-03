@@ -40,13 +40,26 @@ namespace eg
     template <uint16_t S>
     struct page
     {
-        uint8_t     status[S];
-        uint16_t    active[S];
-        uint16_t    inactive[S];
-        uint16_t    active_size;
-        uint16_t    inactive_size;
+        page_data_status    status[S];
+        uint16_t            active[S];
+        uint16_t            inactive[S];
+        uint16_t            active_size;
+        uint16_t            inactive_size;
 
-        
+        auto init() -> void
+        {
+            // Set status
+            for (uint32_t i = 0; i < S; ++i)
+                status[i] = page_data_status::inactive;
+
+            // Set actives
+            active_size = 0;
+
+            // Set inactives;
+            inactive_size = S;
+            for (uint32_t i = 0; i < S; ++i)
+                inactive[i] = S - i - 1;
+        }
     };
 
 /*
