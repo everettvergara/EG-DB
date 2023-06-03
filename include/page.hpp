@@ -46,7 +46,7 @@ namespace eg
         uint16_t            active_size;
         uint16_t            inactive_size;
 
-        auto init() -> void
+        auto init()
         {
             // Set status
             for (uint32_t i = 0; i < S; ++i)
@@ -59,6 +59,16 @@ namespace eg
             inactive_size = S;
             for (uint32_t i = 0; i < S; ++i)
                 inactive[i] = S - i - 1;
+        }
+
+        auto save(const std::string &filename, const uint_t i)
+        {
+            save_block_data<page>(filename, *this, i);
+        }
+
+        auto load(const std::string &filename, const uint_t i)
+        {
+            *this = load_block_data<page>(filename, i);
         }
     };
 
