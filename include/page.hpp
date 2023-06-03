@@ -46,6 +46,11 @@ namespace eg
         uint16_t            active_size;
         uint16_t            inactive_size;
 
+
+        page()
+        {
+        }
+
         auto init()
         {
             // Set status
