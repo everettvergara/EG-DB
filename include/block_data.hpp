@@ -12,7 +12,6 @@
 
 namespace eg
 {
-
     template <typename T>
     auto save_block_data(const std::string &filename, const T &data, const uint_t i)
     {
@@ -68,6 +67,5 @@ namespace eg
         if (file.fail()) throw std::runtime_error("Could not read to the file block.");
 
         return data;
-
     }
 }

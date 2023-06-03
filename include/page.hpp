@@ -4,7 +4,9 @@
 #include <string>
 #include <filesystem>
 #include <memory>
+
 #include "common.hpp"
+#include "block_data.hpp"
 
 namespace eg
 {
@@ -33,6 +35,21 @@ namespace eg
         active, inactive, deleted, locked
     };
 
+
+    // Recommended starting size: 256 records
+    template <uint16_t S>
+    struct page
+    {
+        uint8_t     status[S];
+        uint16_t    active[S];
+        uint16_t    inactive[S];
+        uint16_t    active_size;
+        uint16_t    inactive_size;
+
+        
+    };
+
+/*
     struct page_data
     {
         std::vector<page_data_status> status;
@@ -63,6 +80,7 @@ namespace eg
         {
         }
     };
+
 
     class page
     {
@@ -104,4 +122,6 @@ namespace eg
         page_master_data    data_;
 
     };
+
+*/
 }
