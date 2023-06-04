@@ -114,6 +114,11 @@ namespace eg
             write_block_data<UINT>(filename, &next_id_, offset + sizeof(UINT));
         }
 
+        auto commit_full_page(const std::string &filename, const uint64_t p)
+        {
+            write_block_data<page>(filename, *this, i);
+        }
+
         auto get_next_id(const std::string &filename, const uint64_t p, const uint64_t h) const -> std::optional<uint64_t>
         {
             // Get next ID
@@ -132,7 +137,7 @@ namespace eg
             return p * S + id;
         }
 
-        auto init(const std::string &filename, const uint64_t i)
+        auto init(const std::string &filename, const uint64_t p)
         {
             // Set status
             for (uint64_t i = 0; i < S; ++i)
@@ -142,7 +147,7 @@ namespace eg
             active_size_ = 0;
             next_id_ = 0;
 
-            write_block_data<page>(filename, *this, i);
+            commit_full_page(filename, p);
         }
 
         auto load(const std::string &filename, const uint64_t i)
