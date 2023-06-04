@@ -37,13 +37,18 @@ namespace eg
     };
 
 
+    struct page_data
+    {
+        uint64_t            heap_pos;
+        uint16_t            active_pos;
+        page_data_status    status;
+    };
+
     // Recommended starting size: 256 records
     template <uint16_t S>
     struct page
     {
-        page_data_status    status[S];
-        uint64_t            heap_pos[S];
-        uint16_t            active_pos[S];
+        page_data           page_data[S];
         uint16_t            active[S];
         uint16_t            active_size;
         uint16_t            inactive_size;
