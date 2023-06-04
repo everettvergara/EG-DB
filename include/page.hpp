@@ -42,10 +42,9 @@ namespace eg
     struct page
     {
         page_data_status    status[S];
-        uint64_t            head_pos[S];
+        uint64_t            heap_pos[S];
         uint16_t            active_pos[S];
         uint16_t            active[S];
-        // uint16_t            inactive[S];
         uint16_t            active_size;
         uint16_t            inactive_size;
 
@@ -83,18 +82,23 @@ namespace eg
             return inactive_size;
         }
 
-        auto get_next_id(const uint64_t page_no) const -> std::optional<uint64_t>
+        auto get_next_id(const uint64_t p, const uint64_t h) const -> std::optional<uint64_t>
         {
             // If there are no more IDs left on this page
             if (inactive_size == 0) return {};
             
-            uint16_t id = inactive[0xffff - inactive_size];
+            // Get the next available ID
+            uint16_t id = S - inactive_size;
             --inactive_size;
 
-            status[i] = page_data_status::active;
-            active_pos[i] = 
+            // Init vars
+            status[id]          = page_data_status::active;
+            heap_pos[id]        = h;
+            active[active_size] = id;
+            active_pos[id]      = active_size;
+            ++active_size;
 
-            return page_no * S + id;
+            return p * S + id;
         }
 
         auto init()
