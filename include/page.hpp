@@ -37,23 +37,24 @@ namespace eg
     };
 
 
+    template <typename UINT>
     struct page_data
     {
         uint64_t            heap_pos;
-        uint16_t            active_pos;
+        UINT                active_pos;
         page_data_status    status;
     };
 
     // Recommended starting size: 256 records
 
-    // uint16_t, 32
+    // uint8_t, 2^8
     template <typename UINT, UINT S>
     class page
     {
-        page_data   page_data_[S];
-        UINT        active_[S];
-        UINT        active_size_;
-        UINT        next_id_;
+        page_data<UINT> page_data_[S];
+        uint64_t        active_size_;
+        UINT            active_[S];
+        UINT            next_id_;
 
         page()
         {
@@ -100,19 +101,22 @@ namespace eg
             return p * S + id;
         }
 
-        auto init()
+        auto init(const std::string &filename, const uint_t i)
         {
             // Set status
             for (uint32_t i = 0; i < S; ++i)
                 page_data_[i].status = page_data_status::inactive;
 
             // Set next_id;
+            active_size_ = 0;
             next_id_ = 0;
+
+            write_block_data<page>(filename, *this, i);
         }
 
         // auto save(const std::string &filename, const uint_t i)
         // {
-        //     // write_block_data<page>(filename, *this, i);
+        //     // 
         // }
 
         // auto load(const std::string &filename, const uint_t i)
