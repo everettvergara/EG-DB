@@ -42,16 +42,18 @@ namespace eg
     struct page
     {
         page_data_status    status[S];
-        uint64_t            pos[S];
+        uint64_t            head_pos[S];
+        uint16_t            active_pos[S];
         uint16_t            active[S];
         uint16_t            inactive[S];
+        uint16_t            active_size;
         uint16_t            inactive_size;
 
         page()
         {
         }
 
-        auto del(const uint16_t i)
+        auto delete(const uint16_t i)
         {
             if (status[i] not_eq page_data_status::active) return;
 
@@ -59,8 +61,7 @@ namespace eg
 
         }
 
-
-        auto get_pos(const uint16_t i) const -> std::optional<uint64_t>
+        auto get_head_pos(const uint16_t i) const -> std::optional<uint64_t>
         {
             if (status[i] not_eq page_data_status::active) return {};
             return pos[i];
@@ -88,6 +89,9 @@ namespace eg
             
             uint16_t id = inactive[0xffff - inactive_size];
             --inactive_size;
+
+            status[i] = page_data_status::active;
+            active_pos[i] = 
 
             return page_no * S + id;
         }
