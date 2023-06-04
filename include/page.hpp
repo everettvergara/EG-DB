@@ -45,12 +45,15 @@ namespace eg
     };
 
     // Recommended starting size: 256 records
-    template <uint16_t S>
+
+    // uint16_t, 32
+    template <typename UINT, UINT S>
     class page
     {
-        page_data           page_data_[S];
-        uint16_t            active_[S];
-        uint16_t            next_id_;
+        page_data   page_data_[S];
+        UINT        active_[S];
+        UINT        active_size_;
+        UINT        next_id_;
 
         page()
         {
@@ -88,19 +91,11 @@ namespace eg
 
         auto get_next_id(const uint64_t p, const uint64_t h) const -> std::optional<uint64_t>
         {
-            // If there are no more IDs left on this page
-            if (inactive_size == 0) return {};
-            
-            // Get the next available ID
-            uint16_t id = S - inactive_size;
-            --inactive_size;
-
-            // Init vars
-            status[id]          = page_data_status::active;
-            heap_pos[id]        = h;
-            active[active_size] = id;
-            active_pos[id]      = active_size;
-            ++active_size;
+            auto id                     = next_id_++;
+            active[active_size_]        = id;
+            page_data_[id].heap_pos     = h;
+            page_data_[id].active_pos   = active_size_++;
+            page_data_[id].status       = page_data_status::active;
 
             return p * S + id;
         }
@@ -111,10 +106,7 @@ namespace eg
             for (uint32_t i = 0; i < S; ++i)
                 page_data_[i].status = page_data_status::inactive;
 
-            // Set actives
-            active_size = 0;
-
-            // Set inactives;
+            // Set next_id;
             next_id_ = 0;
         }
 
