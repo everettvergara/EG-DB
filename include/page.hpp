@@ -90,10 +90,14 @@ namespace eg
             return inactive_size;
         }
 
+        auto get_pos_page_data(const uint64_t p) -> uint64_t
+        {
+            return sizeof(page<UINT>) * p;
+        }
+
         auto commit_next_id(const std::string &filename, const uint64_t p, const UINT id)
         {
-            auto offset = sizeof(page<UINT>) * p;
-            write_block_data<page_data>(filename, &page_data_[id], offset + id * sizeof(page_data));
+            write_block_data<page_data>(filename, &page_data_[id], get_pos_page_data() + id * sizeof(page_data));
         }
 
         auto commit_active(const std::string &filename, const uint64_t p, const UINT id)
@@ -157,26 +161,7 @@ namespace eg
 
         auto debug()
         {
-            // std::cout << "Status:";
-            // for (uint32_t i = 0; i < S; ++i)
-            // {
-            //     std::cout << " " << i << ": " << static_cast<int>(status[i]);
-            // } 
-            // std::cout << std::endl;
 
-            // std::cout << "Active:";
-            // for (uint32_t i = 0; i < active_size; ++i)
-            // {
-            //     std::cout << " " << i << ": " << active[i];
-            // } 
-            // std::cout << std::endl;
-
-            // std::cout << "Inactive:";
-            // for (uint32_t i = 0; i < inactive_size; ++i)
-            // {
-            //     std::cout << " " << i << ": " << inactive[i];
-            // } 
-            // std::cout << std::endl;
         }
     };
 
