@@ -44,7 +44,6 @@ namespace eg
         page_data_status    status[S];
         uint16_t            active[S];
         uint16_t            inactive[S];
-        uint16_t            active_size;
         uint16_t            inactive_size;
 
         page()
@@ -54,6 +53,16 @@ namespace eg
         auto get_status(const uint16_t i) const -> page_data_status
         {
             return status[i];
+        }
+
+        auto get_active_size() -> uint16_t
+        {
+            return S - inactive_size;
+        }
+
+        auto get_inactive_size() -> uint16_t
+        {
+            return inactive_size;
         }
 
         auto get_next_id(const uint64_t page_no) const -> std::optional<uint64_t>
