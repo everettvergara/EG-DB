@@ -90,21 +90,25 @@ namespace eg
             return inactive_size;
         }
 
-        auto get_next_id(const uint64_t p, const uint64_t h) const -> std::optional<uint64_t>
+        auto get_next_id(const uint64_t p, const uint64_t h, const uint64_t i) const -> std::optional<uint64_t>
         {
+            // Get next ID
             auto id                     = next_id_++;
             active[active_size_]        = id;
             page_data_[id].heap_pos     = h;
             page_data_[id].active_pos   = active_size_++;
             page_data_[id].status       = page_data_status::active;
 
+            // Commit next ID to file
+            write_block_data<page>(filename, *this, i);
+
             return p * S + id;
         }
 
-        auto init(const std::string &filename, const uint_t i)
+        auto init(const std::string &filename, const uint64_t i)
         {
             // Set status
-            for (uint32_t i = 0; i < S; ++i)
+            for (uint64_t i = 0; i < S; ++i)
                 page_data_[i].status = page_data_status::inactive;
 
             // Set next_id;
@@ -114,15 +118,10 @@ namespace eg
             write_block_data<page>(filename, *this, i);
         }
 
-        // auto save(const std::string &filename, const uint_t i)
-        // {
-        //     // 
-        // }
-
-        // auto load(const std::string &filename, const uint_t i)
-        // {
-        //     // *this = read_block_data<page>(filename, i);
-        // }
+        auto load(const std::string &filename, const uint64_t i)
+        {
+            *this = read_block_data<page>(filename, i);
+        }
 
         auto debug()
         {

@@ -13,7 +13,7 @@
 namespace eg
 {
     template <typename T>
-    auto write_block_data(const std::string &filename, const T &data, const uint_t i)
+    auto write_block_data(const std::string &filename, const T &data, const uint64_t i)
     {
         static_assert(std::is_trivially_copyable_v<T>, "Datastruct too complex.");
 
@@ -40,7 +40,7 @@ namespace eg
     }
 
     template <typename T>
-    auto read_block_data(const std::string &filename, const uint_t i) -> T
+    auto read_block_data(const std::string &filename, const uint64_t i) -> T
     {
         static_assert(std::is_trivially_copyable_v<T>, "Datastruct too complex.");
 
