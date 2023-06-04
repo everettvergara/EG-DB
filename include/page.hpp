@@ -46,7 +46,6 @@ namespace eg
         uint16_t            active_size;
         uint16_t            inactive_size;
 
-
         page()
         {
         }
@@ -75,39 +74,30 @@ namespace eg
         {
             *this = read_block_data<page>(filename, i);
         }
+
+        auto debug()
+        {
+            std::cout << "Status:"
+            for (uint32_t i = 0; i < S; ++i)
+            {
+                std::cout << " " << i << ": " << status[i];
+            } 
+            std::cout << std::endl;
+
+            std::cout << "Active:"
+            for (uint32_t i = 0; i < active_size; ++i)
+            {
+                std::cout << " " << i << ": " << active[i];
+            } 
+            std::cout << std::endl;
+
+            std::cout << "Inactive:"
+            for (uint32_t i = 0; i < inactive_size; ++i)
+            {
+                std::cout << " " << i << ": " << inactive[i];
+            } 
+            std::cout << std::endl;
+        }
     };
 
-/*
-    struct page_master_data
-    {
-        uint_t rows_per_page_;
-        uint_t last_page_;
-    };
-
-    class page_master
-    {
-    public:
-
-        page_master(const std::string &table_name)
-            : page_master_file_(table_name + ".pm")
-        {
-        }
-
-        auto init_page_master()
-        {
-        }
-
-        auto get_page_no(const uint_t r) -> uint_t
-        {
-        }
-
-
-
-    private:
-        std::string         page_master_file_;
-        page_master_data    data_;
-
-    };
-
-*/
 }
