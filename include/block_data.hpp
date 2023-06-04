@@ -13,6 +13,24 @@
 namespace eg
 {
     template <typename T>
+    auto write_block_data(std::fstream &file, const T &data, const uint64_t i)
+    {
+        static_assert(std::is_trivially_copyable_v<T>, "Datastruct too complex.");
+
+        // Check if the file has the right size
+        file.seekp(0, std::ios::end);
+        if (file.fail()) throw std::runtime_error("Could not get the file block size.");
+
+        // Check if version is compatible
+        auto file_size = file.tellp();
+        if (file_size % sizeof(T) not_eq 0) throw std::runtime_error("Version of block size is incompatible.");
+        
+        file.seekp(i * sizeof(T), std::ios::beg);
+        file.write(reinterpret_cast<const char *>(&data), sizeof(T));
+        if (file.fail()) throw std::runtime_error("Could not write to the file block.");
+    }
+
+    template <typename T>
     auto write_block_data(const std::string &filename, const T &data, const uint64_t i)
     {
         static_assert(std::is_trivially_copyable_v<T>, "Datastruct too complex.");

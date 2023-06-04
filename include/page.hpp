@@ -90,20 +90,26 @@ namespace eg
             return inactive_size;
         }
 
-        auto get_pos_page_data(const uint64_t p) -> uint64_t
+        auto get_pos_page_data(const uint64_t p, const UINT id) -> uint64_t
         {
-            return sizeof(page<UINT>) * p;
+            return sizeof(page<UINT>) * p + id * sizeof(page_data);
         }
+
+        auto get_pos_active(const uint64_t p, const UINT id) -> uint64_t
+        {
+            return sizeof(page<UINT>) * p + sizeof(page_data_) + id * sizeof(UINT);
+        }
+
 
         auto commit_next_id(const std::string &filename, const uint64_t p, const UINT id)
         {
-            write_block_data<page_data>(filename, &page_data_[id], get_pos_page_data() + id * sizeof(page_data));
+            write_block_data<page_data>(filename, &page_data_[id], get_pos_page_data(p, id));
         }
 
         auto commit_active(const std::string &filename, const uint64_t p, const UINT id)
         {
             auto offset = sizeof(page<UINT>) * p + sizeof(page_data_);
-            write_block_data<UINT>(filename, &active_[id], offset + id * sizeof(UINT));
+            write_block_data<UINT>(filename, &active_[id], get_pos_active(p, id));
         }
 
         auto commit_active_size(const std::string &filename, const uint64_t p)
