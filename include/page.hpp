@@ -108,6 +108,11 @@ namespace eg
             write_block_data<uint64_t>(filename, &active_size_, offset + sizeof(uint64_t));
         }
 
+        auto commit_next_id(const std::string &filename, const uint64_t p)
+        {
+            auto offset = sizeof(page<UINT>) * p + sizeof(page_data_) + sizeof(active_) + sizeof(active_size_);
+            write_block_data<UINT>(filename, &next_id_, offset + sizeof(UINT));
+        }
 
         auto get_next_id(const std::string &filename, const uint64_t p, const uint64_t h) const -> std::optional<uint64_t>
         {
@@ -119,12 +124,10 @@ namespace eg
             page_data_[id].active_pos   = id_as;
             page_data_[id].status       = page_data_status::active;
 
-
             commit_next_id(filename, p, id);
             commit_active(fiename, p, id_as);
             commit_active_size(filename, p);
-
-
+            commit_next_id(filename, p);
 
             return p * S + id;
         }
