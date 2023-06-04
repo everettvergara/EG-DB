@@ -50,6 +50,13 @@ namespace eg
         {
         }
 
+        auto get_status(const uint16_t i) const -> page_data_status
+        {
+            return status[i];
+        }
+
+        
+
         auto init()
         {
             // Set status
