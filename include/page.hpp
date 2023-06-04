@@ -77,21 +77,21 @@ namespace eg
 
         auto debug()
         {
-            std::cout << "Status:"
+            std::cout << "Status:";
             for (uint32_t i = 0; i < S; ++i)
             {
-                std::cout << " " << i << ": " << status[i];
+                std::cout << " " << i << ": " << static_cast<int>(status[i]);
             } 
             std::cout << std::endl;
 
-            std::cout << "Active:"
+            std::cout << "Active:";
             for (uint32_t i = 0; i < active_size; ++i)
             {
                 std::cout << " " << i << ": " << active[i];
             } 
             std::cout << std::endl;
 
-            std::cout << "Inactive:"
+            std::cout << "Inactive:";
             for (uint32_t i = 0; i < inactive_size; ++i)
             {
                 std::cout << " " << i << ": " << inactive[i];
