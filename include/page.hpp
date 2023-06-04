@@ -4,6 +4,7 @@
 #include <string>
 #include <filesystem>
 #include <memory>
+#include <optional>
 
 #include "common.hpp"
 #include "block_data.hpp"
@@ -55,7 +56,15 @@ namespace eg
             return status[i];
         }
 
-        
+        auto get_next_id(const uint64_t page_no) const -> std::optional<uint64_t>
+        {
+            if (inactive_size == 0) return {};
+            
+            uint16_t id = inactive[0xffff - inactive_size];
+            --inactive_size;
+
+            return page_no * S + id;
+        }
 
         auto init()
         {
