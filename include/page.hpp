@@ -100,28 +100,34 @@ namespace eg
             return sizeof(page<UINT>) * p + sizeof(page_data_) + id * sizeof(UINT);
         }
 
-
-        auto commit_next_id(const std::string &filename, const uint64_t p, const UINT id)
+        auto get_pos_active_size(const uint64_t p) -> uint64_t
         {
-            write_block_data<page_data>(filename, &page_data_[id], get_pos_page_data(p, id));
+            return sizeof(page<UINT>) * p + sizeof(page_data_) + id * sizeof(UINT);
         }
 
-        auto commit_active(const std::string &filename, const uint64_t p, const UINT id)
+        auto get_pos_next_size(const uint64_t p) -> uint64_t
         {
-            auto offset = sizeof(page<UINT>) * p + sizeof(page_data_);
-            write_block_data<UINT>(filename, &active_[id], get_pos_active(p, id));
+            return sizeof(page<UINT>) * p + sizeof(page_data_) + id * sizeof(UINT);
         }
 
-        auto commit_active_size(const std::string &filename, const uint64_t p)
+        auto commit_next_id(std::fstream &file, const uint64_t p, const UINT id)
         {
-            auto offset = sizeof(page<UINT>) * p + sizeof(page_data_) + sizeof(active_);
-            write_block_data<uint64_t>(filename, &active_size_, offset + sizeof(uint64_t));
+            write_block_data<page_data>(file, &page_data_[id], get_pos_page_data(p, id));
         }
 
-        auto commit_next_id(const std::string &filename, const uint64_t p)
+        auto commit_active(std::fstream &file, const uint64_t p, const UINT id)
         {
-            auto offset = sizeof(page<UINT>) * p + sizeof(page_data_) + sizeof(active_) + sizeof(active_size_);
-            write_block_data<UINT>(filename, &next_id_, offset + sizeof(UINT));
+            write_block_data<UINT>(file, &active_[id], get_pos_active(p, id));
+        }
+
+        auto commit_active_size(std::fstream &file, const uint64_t p)
+        {
+            write_block_data<uint64_t>(file, &active_size_, get_pos_active_size());
+        }
+
+        auto commit_next_id(std::fstream &file, const uint64_t p)
+        {
+            write_block_data<UINT>(file, &next_id_, get_pos_next_size());
         }
 
         auto commit_full_page(const std::string &filename, const uint64_t p)
@@ -139,11 +145,13 @@ namespace eg
             page_data_[id].active_pos   = id_as;
             page_data_[id].status       = page_data_status::active;
 
-            commit_next_id(filename, p, id);
-            commit_active(fiename, p, id_as);
-            commit_active_size(filename, p);
-            commit_next_id(filename, p);
-
+            auto file = get_file_handler_for_write_block_data(filename);
+            commit_next_id(file, p, id);
+            commit_active(file, p, id_as);
+            commit_active_size(file, p);
+            commit_next_id(file, p);
+            file.close();
+            
             return p * S + id;
         }
 

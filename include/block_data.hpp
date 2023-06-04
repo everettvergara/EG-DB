@@ -12,6 +12,18 @@
 
 namespace eg
 {
+
+    auto get_file_handler_for_write_block_data(const std::string &filename) -> std::fstream
+    {
+        if (not std::filesystem::exists(filename)) 
+            std::ofstream file(filename, std::ios::binary);
+
+        std::fstream file(filename, std::ios::binary | std::ios::in | std::ios::out);
+        if (not file) throw std::runtime_error("Could not open the block file.");
+
+        return file;
+    }
+
     template <typename T>
     auto write_block_data(std::fstream &file, const T &data, const uint64_t i)
     {
