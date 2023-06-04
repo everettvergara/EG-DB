@@ -52,8 +52,8 @@ namespace eg
     class page
     {
         page_data<UINT> page_data_[S];
-        uint64_t        active_size_;
         UINT            active_[S];
+        uint64_t        active_size_;
         UINT            next_id_;
 
         page()
@@ -90,17 +90,32 @@ namespace eg
             return inactive_size;
         }
 
-        auto get_next_id(const uint64_t p, const uint64_t h, const uint64_t i) const -> std::optional<uint64_t>
+        auto get_next_id(const uint64_t p, const uint64_t h) const -> std::optional<uint64_t>
         {
             // Get next ID
             auto id                     = next_id_++;
-            active[active_size_]        = id;
+            auto id_as                  = active_size_++;
+            active[id_as]               = id;
             page_data_[id].heap_pos     = h;
-            page_data_[id].active_pos   = active_size_++;
+            page_data_[id].active_pos   = id_as;
             page_data_[id].status       = page_data_status::active;
 
             // Commit next ID to file
-            write_block_data<page>(filename, *this, i);
+            auto offset = sizeof(page<UINT>) * p;
+            write_block_data<page_data>(filename, &page_data_[id], offset + id * sizeof(page_data));
+
+            // Commit active
+            auto offset = offset + sizeof(page_data_);
+            write_block_data<UINT>(filename, &active[id_as], offset + id_as * sizeof(UINT));
+            
+
+            // Commit active size
+            // offset = offset + sizeof(page_data_);
+            // write_block_data<active_size_>(filename, &active_size_, offset);
+
+
+            
+
 
             return p * S + id;
         }
