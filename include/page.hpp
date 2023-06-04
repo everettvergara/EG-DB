@@ -46,12 +46,11 @@ namespace eg
 
     // Recommended starting size: 256 records
     template <uint16_t S>
-    struct page
+    class page
     {
-        page_data           page_data[S];
-        uint16_t            active[S];
-        uint16_t            active_size;
-        uint16_t            inactive_size;
+        page_data           page_data_[S];
+        uint16_t            active_[S];
+        uint16_t            next_id_;
 
         page()
         {
@@ -110,47 +109,47 @@ namespace eg
         {
             // Set status
             for (uint32_t i = 0; i < S; ++i)
-                status[i] = page_data_status::inactive;
+                page_data_[i].status = page_data_status::inactive;
 
             // Set actives
             active_size = 0;
 
             // Set inactives;
-            inactive_size = S;
+            next_id_ = 0;
         }
 
-        auto save(const std::string &filename, const uint_t i)
-        {
-            write_block_data<page>(filename, *this, i);
-        }
+        // auto save(const std::string &filename, const uint_t i)
+        // {
+        //     // write_block_data<page>(filename, *this, i);
+        // }
 
-        auto load(const std::string &filename, const uint_t i)
-        {
-            *this = read_block_data<page>(filename, i);
-        }
+        // auto load(const std::string &filename, const uint_t i)
+        // {
+        //     // *this = read_block_data<page>(filename, i);
+        // }
 
         auto debug()
         {
-            std::cout << "Status:";
-            for (uint32_t i = 0; i < S; ++i)
-            {
-                std::cout << " " << i << ": " << static_cast<int>(status[i]);
-            } 
-            std::cout << std::endl;
+            // std::cout << "Status:";
+            // for (uint32_t i = 0; i < S; ++i)
+            // {
+            //     std::cout << " " << i << ": " << static_cast<int>(status[i]);
+            // } 
+            // std::cout << std::endl;
 
-            std::cout << "Active:";
-            for (uint32_t i = 0; i < active_size; ++i)
-            {
-                std::cout << " " << i << ": " << active[i];
-            } 
-            std::cout << std::endl;
+            // std::cout << "Active:";
+            // for (uint32_t i = 0; i < active_size; ++i)
+            // {
+            //     std::cout << " " << i << ": " << active[i];
+            // } 
+            // std::cout << std::endl;
 
-            std::cout << "Inactive:";
-            for (uint32_t i = 0; i < inactive_size; ++i)
-            {
-                std::cout << " " << i << ": " << inactive[i];
-            } 
-            std::cout << std::endl;
+            // std::cout << "Inactive:";
+            // for (uint32_t i = 0; i < inactive_size; ++i)
+            // {
+            //     std::cout << " " << i << ": " << inactive[i];
+            // } 
+            // std::cout << std::endl;
         }
     };
 
