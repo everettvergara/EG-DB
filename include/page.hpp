@@ -45,7 +45,7 @@ namespace eg
         uint64_t            head_pos[S];
         uint16_t            active_pos[S];
         uint16_t            active[S];
-        uint16_t            inactive[S];
+        // uint16_t            inactive[S];
         uint16_t            active_size;
         uint16_t            inactive_size;
 
@@ -85,6 +85,7 @@ namespace eg
 
         auto get_next_id(const uint64_t page_no) const -> std::optional<uint64_t>
         {
+            // If there are no more IDs left on this page
             if (inactive_size == 0) return {};
             
             uint16_t id = inactive[0xffff - inactive_size];
@@ -107,8 +108,6 @@ namespace eg
 
             // Set inactives;
             inactive_size = S;
-            for (uint32_t i = 0; i < S; ++i)
-                inactive[i] = S - i - 1;
         }
 
         auto save(const std::string &filename, const uint_t i)
