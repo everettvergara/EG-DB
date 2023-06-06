@@ -52,27 +52,9 @@ namespace eg
     auto write_block_data(const std::string &filename, const T &data, const uint64_t i)
     {
         static_assert(std::is_trivially_copyable_v<T>, "Datastruct too complex.");
-
-        // Create the file if it does not exists
-        if (not std::filesystem::exists(filename)) 
-            std::ofstream file(filename, std::ios::binary);
-
-        // Assumes file already exists, even if it's 0 bytes.
-        // Otherwise it will fail.
-        std::fstream file(filename, std::ios::binary | std::ios::in | std::ios::out);
-        if (not file) throw std::runtime_error("Could not open the block file.");
-
-        // Check if the file has the right size
-        file.seekp(0, std::ios::end);
-        if (file.fail()) throw std::runtime_error("Could not get the file block size.");
-
-        // Check if version is compatible
-        auto file_size = file.tellp();
-        if (file_size % sizeof(T) not_eq 0) throw std::runtime_error("Version of block size is incompatible.");
         
-        file.seekp(i * sizeof(T), std::ios::beg);
-        file.write(reinterpret_cast<const char *>(&data), sizeof(T));
-        if (file.fail()) throw std::runtime_error("Could not write to the file block.");
+        std::fstream file = get_file_handler_for_write_block_data(filename);
+        write_block_data(file);
     }
 
     template <typename T>
