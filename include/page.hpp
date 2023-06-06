@@ -99,7 +99,7 @@ namespace eg
         }
 
         // Init must be called if page is initialized first time 
-        auto init(const std::string &filename, const uint64_t p)
+        auto init(const std::string &filename, const uint64_t page)
         {
             for (uint64_t i = 0; i < S; ++i)
                 page_data_[i].status = page_data_status::inactive;
@@ -110,7 +110,7 @@ namespace eg
             commit_full_page(filename, p);
         }
 
-        auto load(const std::string &filename, const uint64_t p, const UINT i)
+        auto load(const std::string &filename, const uint64_t page, const UINT i)
         {
             uint64_t fi = p * sizeof(T) + i;
             *this = read_block_data<page>(filename, fi);
@@ -121,11 +121,8 @@ namespace eg
         }
 
         // it is assumed that i exists
-        auto delete(const std::string &filename, const uint64_t p, const uint64_t i)
+        auto delete(const std::string &filename, const uint64_t page, const UINT i)
         {
-            // if (status[i] not_eq page_data_status::active) return;
-            // page_data_
-            UINT i = get_ix(i);
             page_data_[i].status = page_data_status::deleted;
 
             auto file = get_file_handler_for_write_block_data(filename);
@@ -145,19 +142,18 @@ namespace eg
 
     private:
 
-        // It is assumed that the called of this function
-        // knows that this object is on the right page
-        static auto get_ix(const uint64_t i) -> UINT
+        auto commit_full_page(const std::string &filename, const uint64_t page)
         {
-            return i % S;
-        }
+            uint64_t get_pos_page_start = sizeof(page<UINT>) * page;
+            write_block_data<page>(filename, *this, get_pos_page_start);
+        }            
 
-        auto get_pos_page_data(const uint64_t p, const UINT id) -> uint64_t
+        auto get_pos_page_data(const uint64_t page, const UINT i) -> uint64_t
         {
             return sizeof(page<UINT>) * p + id * sizeof(page_data);
         }
 
-        auto get_pos_active(const uint64_t p, const UINT id) -> uint64_t
+        auto get_pos_active(const uint64_t p, const UINT i) -> uint64_t
         {
             return sizeof(page<UINT>) * p + sizeof(page_data_) + id * sizeof(UINT);
         }
@@ -169,33 +165,29 @@ namespace eg
 
         auto get_pos_next_size(const uint64_t p) -> uint64_t
         {
-            return sizeof(page<UINT>) * p + sizeof(page_data_) + id * sizeof(UINT);
+            return sizeof(page<UINT>) * p + sizeof(page_data_) + i * sizeof(UINT);
         }
 
-        auto commit_page_data(std::fstream &file, const uint64_t p, const UINT id)
+        auto commit_page_data(std::fstream &file, const uint64_t page, const UINT i)
         {
             write_block_data<page_data>(file, &page_data_[id], get_pos_page_data(p, id));
         }
 
-        auto commit_active(std::fstream &file, const uint64_t p, const UINT id)
+        auto commit_active(std::fstream &file, const uint64_t page, const UINT i)
         {
             write_block_data<UINT>(file, &active_[id], get_pos_active(p, id));
         }
 
-        auto commit_active_size(std::fstream &file, const uint64_t p)
+        auto commit_active_size(std::fstream &file, const uint64_t page)
         {
             write_block_data<uint64_t>(file, &active_size_, get_pos_active_size());
         }
 
-        auto commit_next_id(std::fstream &file, const uint64_t p)
+        auto commit_next_id(std::fstream &file, const uint64_t page)
         {
             write_block_data<UINT>(file, &next_id_, get_pos_next_id());
         }
 
-        auto commit_full_page(const std::string &filename, const uint64_t p)
-        {
-            write_block_data<page>(filename, *this, i);
-        }    
     };
 
 }
