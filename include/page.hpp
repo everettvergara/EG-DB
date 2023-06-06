@@ -61,6 +61,13 @@ namespace eg
 
     public:
 
+        // It is assumed that the called of this function
+        // knows that this object is on the right page
+        static auto get_ix(const uint64_t i) -> UINT
+        {
+            return i % S;
+        }
+
         auto get_status(const UINT i) const -> page_data
         {
             return page_data_[i];
@@ -76,35 +83,36 @@ namespace eg
             return S - next_id_;
         }
 
-        auto get_next_id(const std::string &filename, const uint64_t p, const uint64_t h) const -> std::optional<uint64_t>
+        // It is assumed that by calling this function
+        // the programmer is aware that there are still
+        // available ID slots.
+        auto generate_next_id(const std::string &filename, const uint64_t page, const uint64_t heap_pos) const -> uint64_t
         {
-            // Get next ID
-            auto id                     = next_id_++;
-            auto id_as                  = active_size_++;
-            active[id_as]               = id;
-            page_data_[id].heap_pos     = h;
-            page_data_[id].active_pos   = id_as;
-            page_data_[id].status       = page_data_status::active;
+            auto gen_id                     = next_id_++;
+            auto ix_active_size             = active_size_++;
+            active[ix_active_size]          = gen_id;
+            page_data_[gen_id].heap_pos     = heap_pos;
+            page_data_[gen_id].active_pos   = ix_active_size;
+            page_data_[gen_id].status       = page_data_status::active;
 
             auto file = get_file_handler_for_write_block_data(filename);
             commit_next_id(file, p, id);
-            commit_active(file, p, id_as);
             commit_active_size(file, p);
+            commit_active(file, p, id_as);
             commit_next_id(file, p);
             file.close();
 
             return p * S + id;
         }
 
+        // Init must be called if page is initialized first time 
         auto init(const std::string &filename, const uint64_t p)
         {
-            // Set status
             for (uint64_t i = 0; i < S; ++i)
                 page_data_[i].status = page_data_status::inactive;
 
-            // Set next_id;
-            active_size_ = 0;
-            next_id_ = 0;
+            active_size_    = 0;
+            next_id_        = 0;
 
             commit_full_page(filename, p);
         }
