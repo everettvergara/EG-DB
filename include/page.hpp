@@ -66,9 +66,9 @@ namespace eg
             return page_data_[i];
         }
 
-        auto get_active_size() -> uint16_t
+        auto get_active_size() -> uint64_t
         {
-            return S - inactive_size;
+            return active_size_;
         }
 
         auto get_inactive_size() -> uint16_t
