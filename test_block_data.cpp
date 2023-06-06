@@ -16,7 +16,10 @@ auto main(int, char *[]) -> int
 {
 
     auto file = get_file_handler_for_write_block_data("block_data_sample.data");
+
+    std::cout << "File size: " << get_file_size(file) << std::endl;
     
+
 
     // {
     //     data_sample data {.x = 100, .y = 100};
