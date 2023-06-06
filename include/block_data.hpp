@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <type_traits>
 #include <filesystem>
+#include <optional>
 
 #include "common.hpp"
 #include "raw.hpp"
@@ -67,7 +68,7 @@ namespace eg
     template <typename T>
     auto read_block_data(std::fstream &file, const uint64_t i) -> std::optional<T>
     {
-        auto last_ix = get_last_ix_of_block_data(file);
+        auto last_ix = get_last_ix_of_block_data<T>(file);
         if (not last_ix.has_value()) return {};
         if (i > last_ix.value()) throw std::runtime_error("Invalid index to load.");
 
