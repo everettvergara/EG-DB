@@ -90,6 +90,51 @@ namespace eg
             return inactive_size;
         }
 
+        auto get_next_id(const std::string &filename, const uint64_t p, const uint64_t h) const -> std::optional<uint64_t>
+        {
+            // Get next ID
+            auto id                     = next_id_++;
+            auto id_as                  = active_size_++;
+            active[id_as]               = id;
+            page_data_[id].heap_pos     = h;
+            page_data_[id].active_pos   = id_as;
+            page_data_[id].status       = page_data_status::active;
+
+            auto file = get_file_handler_for_write_block_data(filename);
+            commit_next_id(file, p, id);
+            commit_active(file, p, id_as);
+            commit_active_size(file, p);
+            commit_next_id(file, p);
+            file.close();
+
+            return p * S + id;
+        }
+
+        auto init(const std::string &filename, const uint64_t p)
+        {
+            // Set status
+            for (uint64_t i = 0; i < S; ++i)
+                page_data_[i].status = page_data_status::inactive;
+
+            // Set next_id;
+            active_size_ = 0;
+            next_id_ = 0;
+
+            commit_full_page(filename, p);
+        }
+
+        auto load(const std::string &filename, const uint64_t i)
+        {
+            *this = read_block_data<page>(filename, i);
+        }
+
+        auto debug()
+        {
+
+        }
+
+    private:
+    
         auto get_pos_page_data(const uint64_t p, const UINT id) -> uint64_t
         {
             return sizeof(page<UINT>) * p + id * sizeof(page_data);
@@ -133,50 +178,7 @@ namespace eg
         auto commit_full_page(const std::string &filename, const uint64_t p)
         {
             write_block_data<page>(filename, *this, i);
-        }
-
-        auto get_next_id(const std::string &filename, const uint64_t p, const uint64_t h) const -> std::optional<uint64_t>
-        {
-            // Get next ID
-            auto id                     = next_id_++;
-            auto id_as                  = active_size_++;
-            active[id_as]               = id;
-            page_data_[id].heap_pos     = h;
-            page_data_[id].active_pos   = id_as;
-            page_data_[id].status       = page_data_status::active;
-
-            auto file = get_file_handler_for_write_block_data(filename);
-            commit_next_id(file, p, id);
-            commit_active(file, p, id_as);
-            commit_active_size(file, p);
-            commit_next_id(file, p);
-            file.close();
-            
-            return p * S + id;
-        }
-
-        auto init(const std::string &filename, const uint64_t p)
-        {
-            // Set status
-            for (uint64_t i = 0; i < S; ++i)
-                page_data_[i].status = page_data_status::inactive;
-
-            // Set next_id;
-            active_size_ = 0;
-            next_id_ = 0;
-
-            commit_full_page(filename, p);
-        }
-
-        auto load(const std::string &filename, const uint64_t i)
-        {
-            *this = read_block_data<page>(filename, i);
-        }
-
-        auto debug()
-        {
-
-        }
+        }    
     };
 
 }

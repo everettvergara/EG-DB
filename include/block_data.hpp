@@ -13,10 +13,16 @@
 namespace eg
 {
 
-    auto get_file_handler_for_write_block_data(const std::string &filename) -> std::fstream
+    auto create_file_if_not_exists(const std::string &filename)
     {
         if (not std::filesystem::exists(filename)) 
             std::ofstream file(filename, std::ios::binary);
+    }
+
+    auto get_file_handler_for_write_block_data(const std::string &filename) -> std::fstream
+    {
+
+        create_file_if_not_exists(filename);
 
         std::fstream file(filename, std::ios::binary | std::ios::in | std::ios::out);
         if (not file) throw std::runtime_error("Could not open the block file.");
