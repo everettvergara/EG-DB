@@ -91,7 +91,7 @@ namespace eg
             page_data_[gen_id].status       = page_data_status::active;
 
             auto file = get_file_handler_for_write_block_data(filename);
-            commit_next_id(file, p, id);
+            commit_page_data(file, p, id);
             commit_active_size(file, p);
             commit_active(file, p, id_as);
             commit_next_id(file, p);
@@ -119,26 +119,29 @@ namespace eg
 
         auto debug()
         {
-
         }
 
         // it is assumed that i exists
-        auto delete(const uint64_t i)
+        auto delete(const std::string &filename, const uint64_t p, const uint64_t i)
         {
             // if (status[i] not_eq page_data_status::active) return;
             // page_data_
             UINT i = get_ix(i);
             page_data_[i].status = page_data_status::deleted;
 
+            auto file = get_file_handler_for_write_block_data(filename);
+            commit_page_data(file, p, id);
+
             if (active_size_ > 0)
             {
                 last_ix = active_size_ - 1;
                 page_data[last_ix].active_pos = i;
                 active_[i] = last_ix;
-
                 --active_size;
-            }
 
+                commit_active_size(file, p);
+                commit_active(file, p, i);                
+            }
         }
 
     private:
@@ -170,7 +173,7 @@ namespace eg
             return sizeof(page<UINT>) * p + sizeof(page_data_) + id * sizeof(UINT);
         }
 
-        auto commit_next_id(std::fstream &file, const uint64_t p, const UINT id)
+        auto commit_page_data(std::fstream &file, const uint64_t p, const UINT id)
         {
             write_block_data<page_data>(file, &page_data_[id], get_pos_page_data(p, id));
         }
@@ -187,7 +190,7 @@ namespace eg
 
         auto commit_next_id(std::fstream &file, const uint64_t p)
         {
-            write_block_data<UINT>(file, &next_id_, get_pos_next_size());
+            write_block_data<UINT>(file, &next_id_, get_pos_next_id());
         }
 
         auto commit_full_page(const std::string &filename, const uint64_t p)
