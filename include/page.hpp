@@ -61,8 +61,6 @@ namespace eg
 
     public:
 
-
-
         auto get_status(const uint64_t i) const -> page_data
         {
             return page_data_[get_ix(i)];
@@ -112,9 +110,10 @@ namespace eg
             commit_full_page(filename, p);
         }
 
-        auto load(const std::string &filename, const uint64_t i)
+        auto load(const std::string &filename, const uint64_t p, const UINT i)
         {
-            *this = read_block_data<page>(filename, i);
+            uint64_t fi = p * sizeof(T) + i;
+            *this = read_block_data<page>(filename, fi);
         }
 
         auto debug()
