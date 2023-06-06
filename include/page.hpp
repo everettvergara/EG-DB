@@ -71,9 +71,9 @@ namespace eg
             return active_size_;
         }
 
-        auto get_inactive_size() -> uint16_t
+        auto get_inactive_size() -> UINT
         {
-            return inactive_size;
+            return S - next_id_;
         }
 
         auto get_next_id(const std::string &filename, const uint64_t p, const uint64_t h) const -> std::optional<uint64_t>
