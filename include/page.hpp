@@ -79,7 +79,7 @@ namespace eg
         // It is assumed that by calling this function
         // the programmer is aware that there are still
         // available ID slots.
-        auto generate_next_id(const std::string &filename, const uint64_t page, const uint64_t heap_pos) const -> uint64_t
+        auto generate_next_id(const std::fstream &file, const uint64_t page, const uint64_t heap_pos) const -> uint64_t
         {
             auto gen_id                     = next_id_++;
             auto ix_active_size             = active_size_++;
@@ -88,13 +88,11 @@ namespace eg
             page_data_[gen_id].active_pos   = ix_active_size;
             page_data_[gen_id].status       = page_data_status::active;
 
-            auto file = get_file_handler_for_write_block_data(filename);
             commit_page_data(file, p, id);
             commit_active_size(file, p);
             commit_active(file, p, id_as);
             commit_next_id(file, p);
-            file.close();
-
+            
             return p * S + id;
         }
 
