@@ -30,7 +30,6 @@ namespace eg
         return file;
     }
 
-    template<typename T>
     auto get_file_size(std::fstream &file) -> std::streampos
     {
         file.seekg(0, std::ios::end);
@@ -54,7 +53,19 @@ namespace eg
     }
 
     template <typename T>
-    auto read_block_data(const std::fstream file, const uint64_t i) -> T
+    auto get_last_ix_of_block_data(std::fstream &file) -> std::optional<uint64_t>
+    {
+        auto file_size = get_file_size(file);
+        if (file_size == 0) return {};
+
+        if (file_size % sizeof(T) not_eq 0) throw std::runtime_error("Version of block size is incompatible.");
+        auto last_ix = file_size / sizeof(T) - 1;
+        
+        return last_ix;
+    }
+
+    template <typename T>
+    auto read_block_data(std::fstream &file, const uint64_t i) -> T
     {
         T data;
         file.seekg(i * sizeof(T), std::ios::beg);
