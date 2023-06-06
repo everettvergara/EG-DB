@@ -1,5 +1,7 @@
 
 #include <iostream>
+#include <vector>
+#include <ranges>
 
 #include "block_data.hpp"
 
@@ -14,10 +16,19 @@ struct data_sample
 
 auto main(int, char *[]) -> int
 {
+    // Initialization
+    std::vector<data_sample> vec(10);
+    for (uint_t i = 0; auto &v : vec)
+    {
+        v.x = i + 1;
+        v.y = v.x * v.x;
+    }
 
     auto file = get_file_handler_for_write_block_data("block_data_sample.data");
 
     std::cout << "File size: " << get_file_size(file) << std::endl;
+    
+    // Skip the first 3 and write
     
 
 
