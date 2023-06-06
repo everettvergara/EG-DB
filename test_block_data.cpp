@@ -17,7 +17,8 @@ struct data_sample
 auto main(int, char *[]) -> int
 {
     // Initialization
-    std::vector<data_sample> vec(10);
+    auto N = 10;
+    std::vector<data_sample> vec(N);
     for (uint_t i = 0; auto &v : vec)
     {
         v.x = i + 1;
@@ -29,45 +30,21 @@ auto main(int, char *[]) -> int
     std::cout << "File size: " << get_file_size(file) << std::endl;
     
     // Skip the first 3 and write
+    std::cout << "data_sample_size: " << sizeof(data_sample) << std::endl;
+    std::cout << "Writing 10 blocks of data_sample: " << get_file_size(file) << std::endl;
+    auto skip = 0;
+    std::cout << "skipped records: " << skip << std::endl;
     
+    auto selection = vec | std::views::drop(skip);
+    for (auto i = skip; auto s : selection)
+    {
+        write_block_data<data_sample>(file, s, i);
+    }
 
-
-    // {
-    //     data_sample data {.x = 100, .y = 100};
-    //     write_block_data<data_sample.data", data, 1);
-
-    //     // Should show 0, because it is skipped 
-        
-    //     auto data1 = read_block_data<data_sample>("block_data_sample.data", 0);
-    //     std::cout << "data1." << data1.x << std::endl;    
-
-        
-    //     // Should show 100 
-    //     auto data2 = read_block_data<data_sample>("block_data_sample.data", 1);
-    //     std::cout << "data2." << data2.x << std::endl;    
-
-
-    //     // Should show 200 
-    //     data_sample data3 {.x = 200, .y = 200};
-    //     write_block_data<data_sample>("block_data_sample.data", data3, 2);
-    //     auto data33 = read_block_data<data_sample>("block_data_sample.data", 2);
-    //     std::cout << "data33." << data33.x << std::endl;
-
-
-    //     // Should show 100 
-    //     auto data22 = read_block_data<data_sample>("block_data_sample.data", 1);
-    //     std::cout << "data22." << data22.x << std::endl;    
-
-
-    //     // Should throw an error 
-    //     auto data44 = read_block_data<data_sample>("block_data_sample.data", 3);
-    //     std::cout << "data44." << data44.x << std::endl;
-
-    // }
-
-
-
-
+    std::cout << "Expecting size after write: " << sizeof(data_sample) * N << std::endl;
+    std::cout << "File size after write: " << get_file_size(file) << std::endl;
 
     return 0;
 }
+
+
