@@ -53,22 +53,17 @@ namespace eg
     template <typename UINT, UINT S>
     class page
     {
+    private:
         page_data<UINT> page_data_[S];
         uint64_t        active_size_;
         UINT            active_[S];
         UINT            next_id_;
 
+    public:
 
-        auto get_head_pos(const uint16_t i) const -> std::optional<uint64_t>
+        auto get_status(const UINT i) const -> page_data
         {
-            if (status[i] not_eq page_data_status::active) return {};
-            return pos[i];
-        }
-
-
-        auto get_status(const uint16_t i) const -> page_data_status
-        {
-            return status[i];
+            return page_data_[i];
         }
 
         auto get_active_size() -> uint16_t
