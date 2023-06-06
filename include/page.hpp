@@ -61,16 +61,11 @@ namespace eg
 
     public:
 
-        // It is assumed that the called of this function
-        // knows that this object is on the right page
-        static auto get_ix(const uint64_t i) -> UINT
-        {
-            return i % S;
-        }
 
-        auto get_status(const UINT i) const -> page_data
+
+        auto get_status(const uint64_t i) const -> page_data
         {
-            return page_data_[i];
+            return page_data_[get_ix(i)];
         }
 
         auto get_active_size() -> uint64_t
@@ -127,16 +122,34 @@ namespace eg
 
         }
 
-        auto delete(const uint16_t i)
+        // it is assumed that i exists
+        auto delete(const uint64_t i)
         {
-            if (status[i] not_eq page_data_status::active) return;
+            // if (status[i] not_eq page_data_status::active) return;
+            // page_data_
+            UINT i = get_ix(i);
+            page_data_[i].status = page_data_status::deleted;
 
-            status[i] = page_data_status::deleted;
+            if (active_size_ > 0)
+            {
+                last_ix = active_size_ - 1;
+                page_data[last_ix].active_pos = i;
+                active_[i] = last_ix;
+
+                --active_size;
+            }
 
         }
 
     private:
-    
+
+        // It is assumed that the called of this function
+        // knows that this object is on the right page
+        static auto get_ix(const uint64_t i) -> UINT
+        {
+            return i % S;
+        }
+
         auto get_pos_page_data(const uint64_t p, const UINT id) -> uint64_t
         {
             return sizeof(page<UINT>) * p + id * sizeof(page_data);
