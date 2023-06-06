@@ -148,6 +148,11 @@ namespace eg
             write_block_data<page>(filename, *this, get_pos_page_start);
         }            
 
+        auto commit_page_data(std::fstream &file, const uint64_t page, const UINT i)
+        {
+            write_block_data<page_data>(file, &page_data_[id], get_pos_page_data(p, id));
+        }
+
         auto get_pos_page_data(const uint64_t page, const UINT i) -> uint64_t
         {
             return sizeof(page<UINT>) * p + id * sizeof(page_data);
@@ -168,10 +173,7 @@ namespace eg
             return sizeof(page<UINT>) * p + sizeof(page_data_) + i * sizeof(UINT);
         }
 
-        auto commit_page_data(std::fstream &file, const uint64_t page, const UINT i)
-        {
-            write_block_data<page_data>(file, &page_data_[id], get_pos_page_data(p, id));
-        }
+
 
         auto commit_active(std::fstream &file, const uint64_t page, const UINT i)
         {
