@@ -79,7 +79,7 @@ namespace eg
         // It is assumed that by calling this function
         // the programmer is aware that there are still
         // available ID slots.
-        auto generate_next_id(const std::fstream &file, const uint64_t page, const uint64_t heap_pos) const -> uint64_t
+        auto generate_next_id(std::fstream &file, const uint64_t page, const uint64_t heap_pos) const -> uint64_t
         {
             auto gen_id                     = next_id_++;
             auto ix_active_size             = active_size_++;
@@ -108,10 +108,10 @@ namespace eg
             commit_full_page(filename, p);
         }
 
-        auto load(const std::string &filename, const uint64_t page, const UINT i)
+        auto load(std::fstream &file, const uint64_t page, const UINT i)
         {
             uint64_t fi = p * sizeof(T) + i;
-            *this = read_block_data<page>(filename, fi);
+            *this = read_block_data<page>(file, fi);
         }
 
         auto debug()
@@ -119,11 +119,11 @@ namespace eg
         }
 
         // it is assumed that i exists
-        auto delete(const std::string &filename, const uint64_t page, const UINT i)
+        auto delete(std::fstream &file, const uint64_t page, const UINT i)
         {
             page_data_[i].status = page_data_status::deleted;
 
-            auto file = get_file_handler_for_write_block_data(filename);
+            // auto file = get_file_handler_for_write_block_data(filename);
             commit_page_data(file, p, id);
 
             if (active_size_ > 0)
@@ -140,10 +140,10 @@ namespace eg
 
     private:
 
-        auto commit_full_page(const std::string &filename, const uint64_t page)
+        auto commit_full_page(std::fstream &file, const uint64_t page)
         {
             uint64_t get_pos_page_start = sizeof(page<UINT>) * page;
-            write_block_data<page>(filename, *this, get_pos_page_start);
+            write_block_data<page>(file, *this, get_pos_page_start);
         }            
 
         auto commit_page_data(std::fstream &file, const uint64_t page, const UINT i)
