@@ -33,7 +33,7 @@ namespace eg
 
     enum struct page_data_status : uint8_t
     {
-        active, inactive, deleted, locked
+        active, inactive, deleted
     };
 
 
@@ -48,25 +48,16 @@ namespace eg
     // Recommended starting size: 256 records
 
     // uint8_t, 2^8
+    // S is recommended to be multiples of uint64_t
+
     template <typename UINT, UINT S>
     class page
     {
         page_data<UINT> page_data_[S];
-        UINT            active_[S];
         uint64_t        active_size_;
+        UINT            active_[S];
         UINT            next_id_;
 
-        page()
-        {
-        }
-
-        auto delete(const uint16_t i)
-        {
-            if (status[i] not_eq page_data_status::active) return;
-
-            status[i] = page_data_status::deleted;
-
-        }
 
         auto get_head_pos(const uint16_t i) const -> std::optional<uint64_t>
         {
@@ -130,6 +121,14 @@ namespace eg
 
         auto debug()
         {
+
+        }
+
+        auto delete(const uint16_t i)
+        {
+            if (status[i] not_eq page_data_status::active) return;
+
+            status[i] = page_data_status::deleted;
 
         }
 
