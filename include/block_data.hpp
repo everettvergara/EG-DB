@@ -54,7 +54,7 @@ namespace eg
         static_assert(std::is_trivially_copyable_v<T>, "Datastruct too complex.");
         
         std::fstream file = get_file_handler_for_write_block_data(filename);
-        write_block_data(file);
+        write_block_data<T>(file, data, i);
     }
 
     template <typename T>
