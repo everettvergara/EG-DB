@@ -62,21 +62,15 @@ namespace eg
         {
             if (option == page_ix_construct_option::INIT)
             {
-                // for (UINT i = 0; i < N; ++i)
-                //     page_ix_status_ = page_ix_status::INACTIVE;
+                for (UINT i = 0; i < N; ++i)
+                    data_[i].status = page_ix_status::INACTIVE;
 
-                // commit_full_page(file, page_no);
+                commit_full_page(file, page_no);
 
             } 
             else 
             {
-                // load_full_page(file, page_no);
-                // load_heap_pos(file, page_no);
-                // load_active_pos(file, page_no);
-                // load_page_ix_status(file, page_no);
-                // load_active_size(file, page_no);
-                // load_active(file, page_no);
-                // load_next_id(file, page_no);
+                load_full_page(file, page_no);
             }
         }
 
