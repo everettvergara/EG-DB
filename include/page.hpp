@@ -14,7 +14,7 @@ namespace eg
 
     enum struct page_ix_status : uint8_t
     {
-        ACTIVE, INACTIVE, DELETED
+        INACTIVE, ACTIVE, DELETED
     };
 
     // enum struct page_ix_construct_option : uint8_t
@@ -85,6 +85,14 @@ namespace eg
             commit_full_page(file, p);
         }
 
+        // Auto load page_ix option
+        page_ix(std::fstream &file, const uint64_t page_no)
+            : active_size_(0), next_id_(0)  
+        {
+            commit_full_page(file, p);
+        }
+
+
         page(const page &) = delete;
         page(page &&) = delete;
         auto operator =(const page &) -> page & = delete;
@@ -124,7 +132,7 @@ namespace eg
             active_[ix_active_size]             = gen_id;
             page_ix_data_[gen_id].heap_pos      = heap_pos;
             page_ix_data_[gen_id].active_pos    = ix_active_size;
-            page_ix_data_[gen_id].status        = page_ix_status::active;
+            page_ix_data_[gen_id].status        = page_ix_status::ACTIVE;
 
             // commit_page_ix(file, p, id);
             // commit_active_size(file, p);
