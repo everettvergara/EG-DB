@@ -35,25 +35,16 @@ namespace eg
         }
     };
 
+
+
     template <typename UINT, UINT N>
     class page_ix
     {
     private:
-        
-        /* 
-         * Contains Index refernce to {Heap position, Active position, Status}
-         * -- 
-         * Index    Page IX Data {Heap position, Active position, Status}
-         * 0        ..., ..., ...
-         * 1        ..., ..., ...
-         * .
-         * .
-         * .
-         * N
-         * 
-         */
 
-        std::vector<page_ix_data<UINT>> page_ix_data_;
+        std::vector<uint64_t>       heap_pos_;
+        std::vector<UINT>           active_pos_;
+        std::vector<page_ix_status> page_ix_status_;
 
         /*
          * An array of active record indices.
@@ -73,7 +64,7 @@ namespace eg
 
         // Auto create page option
         page_ix(std::fstream &file, const uint64_t page_no, const page_ix_construct_option option)
-            : page_ix_data_(N), active_(), next_id_(0)  
+            // : heap_pos_(N), active_pos_(N), active_(), next_id_(0)  
         {
             // commit_full_page(file, p);
         }
