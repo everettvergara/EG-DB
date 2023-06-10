@@ -23,6 +23,11 @@ namespace eg
         uint64_t        heap_pos;
         UINT            active_pos;
         page_ix_status  status;
+
+        page_ix_data()
+            : page_ix_status(INACTIVE)
+        {
+        }
     };
 
     template <typename UINT, UINT N>
@@ -80,6 +85,19 @@ namespace eg
 
     public:
 
+        auto init(std::fstream &file, const uint64_t page_no)
+        {
+            // for (uint64_t i = 0; i < N; ++i)
+            //     page_ix_data_[i].status = page_ix_status::inactive;
+
+            // active_size_    = 0;
+            // next_id_        = 0;
+
+            // commit_full_page(file, p);
+        }
+
+    public:
+
         auto get_page_ix_data(const UINT i) const -> page_ix_data<UINT>
         {
             return page_ix_data_[i];
@@ -121,17 +139,7 @@ namespace eg
             return page_no * N + id;
         }
 
-        // Init must be called if page is initialized first time 
-        auto init(const std::string &filename, const uint64_t page)
-        {
-            for (uint64_t i = 0; i < S; ++i)
-                page_ix_[i].status = page_ix_status::inactive;
-
-            active_size_    = 0;
-            next_id_        = 0;
-
-            commit_full_page(filename, p);
-        }
+        
 
         auto load(std::fstream &file, const uint64_t page, const UINT i)
         {
