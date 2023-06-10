@@ -114,13 +114,15 @@ namespace eg
                         sizeof(UINT);                   // Next ID 
 
             uint64_t fp = page_no * s + i;
-            
+
             return fp;
         }
 
         auto load_full_page(std::fstream &file, const uint64_t page_no)
         {
+            auto start = get_file_page_pos(page_no);
 
+            read_block_data<page>(file, fi);
         }
 
         auto get_page_ix_data(const UINT i) const -> page_ix_data<UINT>
