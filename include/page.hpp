@@ -35,9 +35,11 @@ namespace eg
     {
         uint64_t        heap_pos[N];
         UINT            active_pos[N];
-        page_ix_status  status[N];
+        page_ix_status  status[N] = {page_ix_status::ACTIVE, page_ix_status::ACTIVE};
         uint64_t        active_size;
+        UINT            active[N];
         UINT            next_id;
+
         test            test_[10];
     };
 
@@ -50,6 +52,11 @@ namespace eg
 
             std::cout << "hello: " << N <<std::endl; 
             return t;
+        }
+
+        template<typename U, typename... Args>
+        void construct(U* ptr, Args&&... args) {
+            std::cout << "hello constructor" << std::endl;
         }
 
         auto deallocate(T *t, size_t N)
