@@ -38,6 +38,8 @@ namespace eg
         auto allocate(const size_t N) -> T *
         {
             auto *t = std::allocator<T>::allocate(N);
+
+            std::cout << "hello: " << N <<std::endl; 
             return t;
         }
 
