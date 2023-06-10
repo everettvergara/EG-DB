@@ -52,42 +52,25 @@ namespace eg
     {
     private:
 
-        // No initialization by default just alloc
-        std::vector<uint64_t, no_init<uint64_t>>    heap_pos_;
-
-        // No initialization by default just alloc
-        std::vector<UINT, no_init<UINT>>            active_pos_;
-
-        // Will be initialized to INACTIVE by default
-        std::vector<page_ix_status, no_init<UINT>>  page_ix_status_;
-
-        uint64_t                                    active_size_;
-        std::vector<UINT, no_init<UINT>>            active_;
-
-        /*
-         * The next ID that will be used in the active index
-         *
-         */
-
-        UINT                            next_id_;
+        std::vector<page_ix_data<UINT, N>, no_init<page_ix_data<UINT, N>>> data_;
 
     public:
 
         // Auto create page option
         page_ix(std::fstream &file, const uint64_t page_no, const page_ix_construct_option option)
-            :   heap_pos_(N), active_pos_(N), page_ix_status_(N), active_size_(0), active_(N), next_id_(0)
+            :   data_(N)
         {
             if (option == page_ix_construct_option::INIT)
             {
-                for (UINT i = 0; i < N; ++i)
-                    page_ix_status_ = page_ix_status::INACTIVE;
+                // for (UINT i = 0; i < N; ++i)
+                //     page_ix_status_ = page_ix_status::INACTIVE;
 
-                commit_full_page(file, page_no);
+                // commit_full_page(file, page_no);
 
             } 
             else 
             {
-                load_full_page(file, page_no);
+                // load_full_page(file, page_no);
                 // load_heap_pos(file, page_no);
                 // load_active_pos(file, page_no);
                 // load_page_ix_status(file, page_no);
