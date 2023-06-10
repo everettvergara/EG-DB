@@ -17,10 +17,10 @@ namespace eg
         INACTIVE, ACTIVE, DELETED
     };
 
-    // enum struct page_ix_construct_option : uint8_t
-    // {
-    //     INIT, LOAD
-    // };
+    enum struct page_ix_construct_option : uint8_t
+    {
+        INIT, LOAD
+    };
 
     template <typename UINT>
     struct page_ix_data
@@ -53,43 +53,29 @@ namespace eg
          * 
          */
 
-        page_ix_data<UINT>  page_ix_data_[N];
+        std::vector<page_ix_data<UINT>> page_ix_data_;
 
-        /*
-         * The size of active record indices
-         *
-         */
-        
-        uint64_t            active_size_;
-        
         /*
          * An array of active record indices.
          *
          */
-        
-        UINT                active_[N];
+
+        std::vector<UINT>               active_;
 
         /*
          * The next ID that will be used in the active index
          *
          */
 
-        UINT                next_id_;
+        UINT                            next_id_;
 
     public:
 
         // Auto create page option
-        page_ix(std::fstream &file, const uint64_t page_no)
-            : active_size_(0), next_id_(0)  
+        page_ix(std::fstream &file, const uint64_t page_no, const page_ix_construct_option option)
+            : page_ix_data_(N), active_(), next_id_(0)  
         {
-            commit_full_page(file, p);
-        }
-
-        // Auto load page_ix option
-        page_ix(std::fstream &file, const uint64_t page_no)
-            : active_size_(0), next_id_(0)  
-        {
-            commit_full_page(file, p);
+            // commit_full_page(file, p);
         }
 
 
