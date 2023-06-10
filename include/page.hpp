@@ -17,6 +17,11 @@ namespace eg
         ACTIVE, INACTIVE, DELETED
     };
 
+    // enum struct page_ix_construct_option : uint8_t
+    // {
+    //     INIT, LOAD
+    // };
+
     template <typename UINT>
     struct page_ix_data
     {
@@ -73,9 +78,11 @@ namespace eg
 
     public:
 
-        page_ix()
+        // Auto create page option
+        page_ix(std::fstream &file, const uint64_t page_no)
             : active_size_(0), next_id_(0)  
         {
+            commit_full_page(file, p);
         }
 
         page(const page &) = delete;
@@ -83,18 +90,6 @@ namespace eg
         auto operator =(const page &) -> page & = delete;
         auto operator =(page &&) -> page & = delete;
 
-    public:
-
-        auto init(std::fstream &file, const uint64_t page_no)
-        {
-            // for (uint64_t i = 0; i < N; ++i)
-            //     page_ix_data_[i].status = page_ix_status::inactive;
-
-            // active_size_    = 0;
-            // next_id_        = 0;
-
-            // commit_full_page(file, p);
-        }
 
     public:
 
