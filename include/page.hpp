@@ -22,12 +22,14 @@ namespace eg
         INIT, LOAD
     };
 
-    template <typename UINT>
+    template <typename UINT, UINT N>
     struct page_ix_data
     {
-        uint64_t        heap_pos;
-        UINT            active_pos;
-        page_ix_status  status;
+        uint64_t        heap_pos[N];
+        UINT            active_pos[N];
+        page_ix_status  status[N];
+        uint64_t        active_size;
+        UINT            next_id;
     };
 
     template <typename T>
