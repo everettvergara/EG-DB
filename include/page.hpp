@@ -80,25 +80,25 @@ namespace eg
 
     public:
 
-        auto get_status(const uint64_t i) const -> page_ix
+        auto get_page_ix_data(const UINT i) const -> page_ix_data<UINT>
         {
-            return page_ix_[get_ix(i)];
+            return page_ix_data_[i];
         }
 
-        auto get_active_size() -> uint64_t
+        auto get_active_size() const -> decltype(active_size_)
         {
             return active_size_;
         }
 
-        auto get_inactive_size() -> UINT
+        auto get_inactive_size() const -> UINT
         {
-            return S - next_id_;
+            return N - next_id_;
         }
 
         // It is assumed that by calling this function
         // the programmer is aware that there are still
         // available ID slots.
-        auto generate_next_id(std::fstream &file, const uint64_t page, const uint64_t heap_pos) const -> uint64_t
+        auto generate_next_id(std::fstream &file, const uint64_t page, const uint64_t heap_pos) -> UINT
         {
             auto gen_id                     = next_id_++;
             auto ix_active_size             = active_size_++;
