@@ -11,38 +11,18 @@
 
 namespace eg
 {
-    /*
-    struct inactive_alloc : std::allocator<uint16_t>
+
+    enum struct page_ix_status : uint8_t
     {
-        auto allocate(size_t n) -> uint16_t *
-        {
-            auto *p = std::allocator<uint16_t>::allocate(n);
-
-            for (size_t i = 0; i < 0xffff; ++i)
-                p[i] = static_cast<uint16_t>(i);
-
-            return p;
-        }
-
-        auto deallocate(uint16_t *p, size_t n)
-        {
-            std::allocator<uint16_t>::deallocate(p, n);
-        }
+        ACTIVE, INACTIVE, DELETED
     };
-    */
-
-    enum struct page_data_status : uint8_t
-    {
-        active, inactive, deleted
-    };
-
 
     template <typename UINT>
-    struct page_data
+    struct page_ix
     {
-        uint64_t            heap_pos;
-        UINT                active_pos;
-        page_data_status    status;
+        uint64_t        heap_pos;
+        UINT            active_pos;
+        page_ix_status  status;
     };
 
     // Recommended starting size: 256 records
@@ -54,16 +34,16 @@ namespace eg
     class page
     {
     private:
-        page_data<UINT> page_data_[S];
+        page_ix<UINT> page_ix_[S];
         uint64_t        active_size_;
         UINT            active_[S];
         UINT            next_id_;
 
     public:
 
-        auto get_status(const uint64_t i) const -> page_data
+        auto get_status(const uint64_t i) const -> page_ix
         {
-            return page_data_[get_ix(i)];
+            return page_ix_[get_ix(i)];
         }
 
         auto get_active_size() -> uint64_t
@@ -84,11 +64,11 @@ namespace eg
             auto gen_id                     = next_id_++;
             auto ix_active_size             = active_size_++;
             active[ix_active_size]          = gen_id;
-            page_data_[gen_id].heap_pos     = heap_pos;
-            page_data_[gen_id].active_pos   = ix_active_size;
-            page_data_[gen_id].status       = page_data_status::active;
+            page_ix_[gen_id].heap_pos     = heap_pos;
+            page_ix_[gen_id].active_pos   = ix_active_size;
+            page_ix_[gen_id].status       = page_ix_status::active;
 
-            commit_page_data(file, p, id);
+            commit_page_ix(file, p, id);
             commit_active_size(file, p);
             commit_active(file, p, id_as);
             commit_next_id(file, p);
@@ -100,7 +80,7 @@ namespace eg
         auto init(const std::string &filename, const uint64_t page)
         {
             for (uint64_t i = 0; i < S; ++i)
-                page_data_[i].status = page_data_status::inactive;
+                page_ix_[i].status = page_ix_status::inactive;
 
             active_size_    = 0;
             next_id_        = 0;
@@ -121,15 +101,15 @@ namespace eg
         // it is assumed that i exists
         auto delete(std::fstream &file, const uint64_t page, const UINT i)
         {
-            page_data_[i].status = page_data_status::deleted;
+            page_ix_[i].status = page_ix_status::deleted;
 
             // auto file = get_file_handler_for_write_block_data(filename);
-            commit_page_data(file, p, id);
+            commit_page_ix(file, p, id);
 
             if (active_size_ > 0)
             {
                 last_ix = active_size_ - 1;
-                page_data[last_ix].active_pos = i;
+                page_ix[last_ix].active_pos = i;
                 active_[i] = last_ix;
                 --active_size;
 
@@ -146,29 +126,29 @@ namespace eg
             write_block_data<page>(file, *this, get_pos_page_start);
         }            
 
-        auto commit_page_data(std::fstream &file, const uint64_t page, const UINT i)
+        auto commit_page_ix(std::fstream &file, const uint64_t page, const UINT i)
         {
-            write_block_data<page_data>(file, &page_data_[id], get_pos_page_data(p, id));
+            write_block_data<page_ix>(file, &page_ix_[id], get_pos_page_ix(p, id));
         }
 
-        auto get_pos_page_data(const uint64_t page, const UINT i) -> uint64_t
+        auto get_pos_page_ix(const uint64_t page, const UINT i) -> uint64_t
         {
-            return sizeof(page<UINT>) * p + id * sizeof(page_data);
+            return sizeof(page<UINT>) * p + id * sizeof(page_ix);
         }
 
         auto get_pos_active(const uint64_t p, const UINT i) -> uint64_t
         {
-            return sizeof(page<UINT>) * p + sizeof(page_data_) + id * sizeof(UINT);
+            return sizeof(page<UINT>) * p + sizeof(page_ix_) + id * sizeof(UINT);
         }
 
         auto get_pos_active_size(const uint64_t p) -> uint64_t
         {
-            return sizeof(page<UINT>) * p + sizeof(page_data_) + id * sizeof(UINT);
+            return sizeof(page<UINT>) * p + sizeof(page_ix_) + id * sizeof(UINT);
         }
 
         auto get_pos_next_size(const uint64_t p) -> uint64_t
         {
-            return sizeof(page<UINT>) * p + sizeof(page_data_) + i * sizeof(UINT);
+            return sizeof(page<UINT>) * p + sizeof(page_ix_) + i * sizeof(UINT);
         }
 
 

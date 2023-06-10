@@ -42,7 +42,6 @@ namespace eg
         return file_size;
     }
 
-
     template <typename T>
     auto write_block_data(std::fstream &file, const T &data, const uint64_t i)
     {
