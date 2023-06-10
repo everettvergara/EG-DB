@@ -78,4 +78,18 @@ namespace eg
 
         return data;        
     }
+
+    template <typename T>
+    auto read_block_data(std::fstream &file, const uint64_t i, T *data)
+    {
+        auto last_ix = get_last_ix_of_block_data<T>(file);
+        if (not last_ix.has_value()) return {};
+        if (i > last_ix.value()) throw std::runtime_error("Invalid index to load.");
+
+        file.seekg(i * sizeof(T), std::ios::beg);
+        file.read(reinterpret_cast<char *>(data), sizeof(T));
+        if (file.fail()) throw std::runtime_error("Could not read from the file block.");
+
+        return data;        
+    }    
 }
