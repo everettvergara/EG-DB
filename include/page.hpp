@@ -28,30 +28,39 @@ namespace eg
         uint64_t        heap_pos;
         UINT            active_pos;
         page_ix_status  status;
-
-        page_ix_data()
-            : page_ix_status(INACTIVE)
-        {
-        }
     };
 
+    template <typename T>
+    struct no_init : std::allocator<T>
+    {
+        auto allocate(const size_t N) -> T *
+        {
+            auto *t = std::allocator<T>::allocate(N);
+            return t;
+        }
 
+        auto deallocate(T *t, size_t N)
+        {
+            std::allocator<T>::deallocate(t, N);
+        }
+    };
 
     template <typename UINT, UINT N>
     class page_ix
     {
     private:
 
-        std::vector<uint64_t>       heap_pos_;
-        std::vector<UINT>           active_pos_;
-        std::vector<page_ix_status> page_ix_status_;
+        // No initialization by default just alloc
+        std::vector<uint64_t, no_init<uint64_t>>    heap_pos_;
 
-        /*
-         * An array of active record indices.
-         *
-         */
+        // No initialization by default just alloc
+        std::vector<UINT, no_init<UINT>>            active_pos_;
 
-        std::vector<UINT>               active_;
+        // Will be initialized to INACTIVE by default
+        std::vector<page_ix_status, no_init<UINT>>  page_ix_status_;
+
+        uint64_t                                    active_size_;
+        std::vector<UINT, no_init<UINT>>            active_;
 
         /*
          * The next ID that will be used in the active index
@@ -64,9 +73,26 @@ namespace eg
 
         // Auto create page option
         page_ix(std::fstream &file, const uint64_t page_no, const page_ix_construct_option option)
-            // : heap_pos_(N), active_pos_(N), active_(), next_id_(0)  
+            :   heap_pos_(N), active_pos_(N), page_ix_status_(N), active_size_(0), active_(N), next_id_(0)
         {
-            // commit_full_page(file, p);
+            if (option == page_ix_construct_option::INIT)
+            {
+                for (UINT i = 0; i < N; ++i)
+                    page_ix_status_ = page_ix_status::INACTIVE;
+
+                commit_full_page(file, page_no);
+
+            } 
+            else 
+            {
+                load_full_page(file, page_no);
+                // load_heap_pos(file, page_no);
+                // load_active_pos(file, page_no);
+                // load_page_ix_status(file, page_no);
+                // load_active_size(file, page_no);
+                // load_active(file, page_no);
+                // load_next_id(file, page_no);
+            }
         }
 
 
@@ -77,6 +103,25 @@ namespace eg
 
 
     public:
+
+        auto get_file_page_pos(const uint64_t page_no) const -> uint64_t
+        {
+            size_t s =  N * sizeof(uint64_t) +          // Heap pos 
+                        N * sizeof(UINT) +              // Active pos 
+                        N * sizeof(page_ix_status) +    // Page IX status
+                        sizeof(uint64_t)                // active_size_
+                        N * sizeof(UINT) +              // active
+                        sizeof(UINT);                   // Next ID 
+
+            uint64_t fp = page_no * s + i;
+            
+            return fp;
+        }
+
+        auto load_full_page(std::fstream &file, const uint64_t page_no)
+        {
+
+        }
 
         auto get_page_ix_data(const UINT i) const -> page_ix_data<UINT>
         {
@@ -121,11 +166,35 @@ namespace eg
 
         
 
-        auto load(std::fstream &file, const uint64_t page, const UINT i)
-        {
-            uint64_t fi = p * sizeof(T) + i;
-            *this = read_block_data<page>(file, fi);
-        }
+        // auto load_heap_pos(std::fstream &file, const uint64_t page, const UINT i)
+        // {
+        //     // uint64_t fi = p * sizeof(T) + i;
+        //     // *this = read_block_data<page>(file, fi);
+        // }
+
+        // auto load_active_pos(std::fstream &file, const uint64_t page, const UINT i)
+        // {
+        //     // uint64_t fi = p * sizeof(T) + i;
+        //     // *this = read_block_data<page>(file, fi);
+        // }
+
+        // auto load_page_ix_status(std::fstream &file, const uint64_t page, const UINT i)
+        // {
+        //     // uint64_t fi = p * sizeof(T) + i;
+        //     // *this = read_block_data<page>(file, fi);
+        // }
+
+        // auto load_active(std::fstream &file, const uint64_t page, const UINT i)
+        // {
+        //     // uint64_t fi = p * sizeof(T) + i;
+        //     // *this = read_block_data<page>(file, fi);
+        // }
+
+        // auto load_next(std::fstream &file, const uint64_t page, const UINT i)
+        // {
+        //     // uint64_t fi = p * sizeof(T) + i;
+        //     // *this = read_block_data<page>(file, fi);
+        // }
 
         auto debug()
         {
