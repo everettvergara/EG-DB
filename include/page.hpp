@@ -47,6 +47,8 @@ namespace eg
         }
     };
 
+
+/*
     template <typename UINT, UINT N>
     class page_ix
     {
@@ -118,14 +120,7 @@ namespace eg
             return N - next_id_;
         }
 
-        /* 
-         * It is assumed that by calling this function.
-         *
-         * or simply call get_inactive_size() and 
-         * if it equals = 0 then do not call generate_next_id()
-         *
-         * 
-         */ 
+
 
         auto generate_next_id(std::fstream &file, const uint64_t page_no, const uint64_t heap_pos) -> uint64_t
         {
@@ -142,42 +137,6 @@ namespace eg
             // commit_next_id(file, p);
             
             return page_no * N + id;
-        }
-
-        
-
-        // auto load_heap_pos(std::fstream &file, const uint64_t page, const UINT i)
-        // {
-        //     // uint64_t fi = p * sizeof(T) + i;
-        //     // *this = read_block_data<page>(file, fi);
-        // }
-
-        // auto load_active_pos(std::fstream &file, const uint64_t page, const UINT i)
-        // {
-        //     // uint64_t fi = p * sizeof(T) + i;
-        //     // *this = read_block_data<page>(file, fi);
-        // }
-
-        // auto load_page_ix_status(std::fstream &file, const uint64_t page, const UINT i)
-        // {
-        //     // uint64_t fi = p * sizeof(T) + i;
-        //     // *this = read_block_data<page>(file, fi);
-        // }
-
-        // auto load_active(std::fstream &file, const uint64_t page, const UINT i)
-        // {
-        //     // uint64_t fi = p * sizeof(T) + i;
-        //     // *this = read_block_data<page>(file, fi);
-        // }
-
-        // auto load_next(std::fstream &file, const uint64_t page, const UINT i)
-        // {
-        //     // uint64_t fi = p * sizeof(T) + i;
-        //     // *this = read_block_data<page>(file, fi);
-        // }
-
-        auto debug()
-        {
         }
 
         // it is assumed that i exists
@@ -250,6 +209,10 @@ namespace eg
             write_block_data<UINT>(file, &next_id_, get_pos_next_id());
         }
 
+
     };
+
+
+    */
 
 }
