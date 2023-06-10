@@ -18,26 +18,65 @@ namespace eg
     };
 
     template <typename UINT>
-    struct page_ix
+    struct page_ix_data
     {
         uint64_t        heap_pos;
         UINT            active_pos;
         page_ix_status  status;
     };
 
-    // Recommended starting size: 256 records
-
-    // uint8_t, 2^8
-    // S is recommended to be multiples of uint64_t
-
-    template <typename UINT, UINT S>
-    class page
+    template <typename UINT, UINT N>
+    class page_ix
     {
     private:
-        page_ix<UINT> page_ix_[S];
-        uint64_t        active_size_;
-        UINT            active_[S];
-        UINT            next_id_;
+        
+        /* 
+         * Contains Index refernce to {Heap position, Active position, Status}
+         * -- 
+         * Index    Page IX Data {Heap position, Active position, Status}
+         * 0        ..., ..., ...
+         * 1        ..., ..., ...
+         * .
+         * .
+         * .
+         * N
+         * 
+         */
+
+        page_ix_data<UINT>  page_ix_data_[N];
+
+        /*
+         * The size of active record indices
+         *
+         */
+        
+        uint64_t            active_size_;
+        
+        /*
+         * An array of active record indices.
+         *
+         */
+        
+        UINT                active_[N];
+
+        /*
+         * The next ID that will be used in the active index
+         *
+         */
+
+        UINT                next_id_;
+
+    public:
+
+        page_ix()
+            : active_size_(0), next_id_(0)  
+        {
+        }
+
+        page(const page &) = delete;
+        page(page &&) = delete;
+        auto operator =(const page &) -> page & = delete;
+        auto operator =(page &&) -> page & = delete;
 
     public:
 
