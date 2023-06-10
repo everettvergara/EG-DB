@@ -95,24 +95,30 @@ namespace eg
             return N - next_id_;
         }
 
-        // It is assumed that by calling this function
-        // the programmer is aware that there are still
-        // available ID slots.
-        auto generate_next_id(std::fstream &file, const uint64_t page, const uint64_t heap_pos) -> UINT
-        {
-            auto gen_id                     = next_id_++;
-            auto ix_active_size             = active_size_++;
-            active[ix_active_size]          = gen_id;
-            page_ix_[gen_id].heap_pos     = heap_pos;
-            page_ix_[gen_id].active_pos   = ix_active_size;
-            page_ix_[gen_id].status       = page_ix_status::active;
+        /* 
+         * It is assumed that by calling this function.
+         *
+         * or simply call get_inactive_size() and 
+         * if it equals = 0 then do not call generate_next_id()
+         *
+         * 
+         */ 
 
-            commit_page_ix(file, p, id);
-            commit_active_size(file, p);
-            commit_active(file, p, id_as);
-            commit_next_id(file, p);
+        auto generate_next_id(std::fstream &file, const uint64_t page_no, const uint64_t heap_pos) -> uint64_t
+        {
+            auto gen_id                         = next_id_++;
+            auto ix_active_size                 = active_size_++;
+            active_[ix_active_size]             = gen_id;
+            page_ix_data_[gen_id].heap_pos      = heap_pos;
+            page_ix_data_[gen_id].active_pos    = ix_active_size;
+            page_ix_data_[gen_id].status        = page_ix_status::active;
+
+            // commit_page_ix(file, p, id);
+            // commit_active_size(file, p);
+            // commit_active(file, p, id_as);
+            // commit_next_id(file, p);
             
-            return p * S + id;
+            return page_no * N + id;
         }
 
         // Init must be called if page is initialized first time 
