@@ -32,17 +32,23 @@ auto main(int, char *[]) -> int
     // Skip the first 3 and write
     std::cout << "data_sample_size: " << sizeof(data_sample) << std::endl;
     std::cout << "Writing 10 blocks of data_sample: " << get_file_size(file) << std::endl;
-    auto skip = 0;
+    auto skip = 3;
     std::cout << "skipped records: " << skip << std::endl;
     
     auto selection = vec | std::views::drop(skip);
     for (auto i = skip; auto s : selection)
     {
+        std::cout << "writing: " << i << std::endl;
         write_block_data<data_sample>(file, s, i);
+        ++i;
     }
 
     std::cout << "Expecting size after write: " << sizeof(data_sample) * N << std::endl;
     std::cout << "File size after write: " << get_file_size(file) << std::endl;
+
+    for (auto i = skip; auto s : selection)
+    {
+    }
 
     return 0;
 }
