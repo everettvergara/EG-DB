@@ -22,6 +22,14 @@ namespace eg
         INIT, LOAD
     };
 
+    struct test
+    {
+        test()
+        {
+            std::cout << "this is a constructor!" << std::endl;
+        }
+    };
+
     template <typename UINT, UINT N>
     struct page_ix_data
     {
@@ -30,6 +38,7 @@ namespace eg
         page_ix_status  status[N];
         uint64_t        active_size;
         UINT            next_id;
+        test            test_[10];
     };
 
     template <typename T>
