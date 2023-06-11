@@ -63,7 +63,7 @@ namespace eg
     auto read_data(std::fstream &file, const std::streampos pos, T *data) -> T *
     {
         file.seekg(pos, std::ios::beg);
-        file.read(reinterpret_cast<char *>(&data), sizeof(T));
+        file.read(reinterpret_cast<char *>(data), sizeof(T));
         if (file.fail()) throw std::runtime_error("Could not read from the file block.");
 
         return data;        

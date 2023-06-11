@@ -53,12 +53,15 @@ auto main(int, char *[]) -> int
     data_sample d;
     for (auto i = 0; i < N; ++i)
     {
-        read_block_data<data_sample>(file, i, &d);
-        // auto d = read_block_data<data_sample>(file, i);
+        std::cout << "reading i: " << i << std::endl;
 
+        read_block_data<data_sample>(file, i, &d);
+        std::cout << d.x << ", " << d.y << std::endl;
+
+        // auto d = read_block_data<data_sample>(file, i);
         // if (d.has_value())
         // {
-        std::cout << d.x << ", " << d.y << std::endl;
+        // std::cout << d.value().x << ", " << d.value().y << std::endl;
         // }
     }
 
