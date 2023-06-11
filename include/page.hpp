@@ -171,6 +171,19 @@ namespace eg
             if (data_ptr_->status[id] not_eq page_ix_status::ACTIVE) return {};
             return data_ptr_->heap_pos[id];
         }
+        
+        auto retrieve_heap_pos_by_id(std::initializer_list<UINT> ids) const -> std::vector<std::tuple<UINT, uint64_t>>
+        {
+            std::vector<std::tuple<UINT, uint64_t>> result;
+            
+            for (auto id : ids)
+            {
+                if (data_ptr_->status[id] == page_ix_status::ACTIVE)
+                    result.emplace_back(id, data_ptr_->heap_pos[id]);
+            }
+
+            return result;
+        }
 
         auto retrieve_heap_pos_all_active() const -> std::vector<std::tuple<UINT, uint64_t>>
         {
