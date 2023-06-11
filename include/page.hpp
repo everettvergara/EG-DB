@@ -23,20 +23,12 @@ namespace eg
         INIT, LOAD
     };
 
-    struct test
-    {
-        test()
-        {
-            std::cout << "this is a constructor!" << std::endl;
-        }
-    };
-
     template <typename UINT, UINT N>
     struct page_ix_data
     {
         uint64_t        heap_pos[N];
         UINT            active_pos[N];
-        page_ix_status  status[N];
+        page_ix_status  status[N] = {page_ix_status::DELETED, page_ix_status::DELETED};
         uint64_t        active_size;
         UINT            active[N];
         UINT            next_id;
@@ -84,6 +76,8 @@ namespace eg
 
             : data_(), data_ptr_(data_.allocate(1))
         {
+
+            std::cout << "Status at 0: " << data_ptr_->status[0] << std::endl;
 
             if (option == page_ix_construct_option::INIT)
             {
