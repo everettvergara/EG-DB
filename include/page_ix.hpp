@@ -39,12 +39,12 @@ namespace eg
     template <typename UINT, UINT N>
     struct page_ix_data
     {
-        uint64_t        heap_pos[N];
-        UINT            active_pos[N];
-        page_ix_status  status[N];
-        uint64_t        active_size;
-        UINT            active[N];
-        UINT            next_id;
+        uint64_t        heap_pos[N];    //  8 * 10  =   80
+        UINT            active_pos[N];  //  1 * 10  =   10
+        page_ix_status  status[N];      //  1 * 10  =   10
+        uint64_t        active_size;    //  8       =   8
+        UINT            active[N];      //  1 * 10  =   10
+        UINT            next_id;        //  1       =   1   ==  120
     };
 
     template <typename T>
