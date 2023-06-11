@@ -23,6 +23,18 @@ namespace eg
         INIT, LOAD
     };
 
+    // TODO: CHANGE ACTIVE_SIZE TO UINT, since N = 0 to 254
+    struct test
+    {
+        int x;
+        test() 
+            : x(10)
+        {
+            std::cout << "test constructor here..." << std::endl;
+        }
+
+    };
+
     template <typename UINT, UINT N>
     struct page_ix_data
     {
@@ -32,28 +44,14 @@ namespace eg
         uint64_t        active_size;
         UINT            active[N];
         UINT            next_id;
+
+        test            test_data[10];
     };
 
     template <typename T>
     struct no_init : std::allocator<T>
     {
         static_assert(std::is_trivially_copyable_v<T>, "no_init is allowable only on trivially copyable structs.");
-
-        auto allocate(const size_t N) -> T *
-        {
-            auto *t = std::allocator<T>::allocate(N);
-            return t;
-        }
-
-        template<typename U, typename ...Args>
-        void construct(U* ptr, Args &&... args) 
-        {
-        }
-
-        auto deallocate(T *t, size_t N)
-        {
-            std::allocator<T>::deallocate(t, N);
-        }
     };
 
     template <typename UINT, UINT N>
@@ -62,7 +60,7 @@ namespace eg
     private:
 
         no_init<page_ix_data<UINT, N>>  data_;
-        page_ix_data                    *data_ptr_;
+        page_ix_data<UINT, N>           *data_ptr_;
         
     
     public:
@@ -74,22 +72,18 @@ namespace eg
             // Initialization depends 
             // on the type construct option.
 
-            : data_(), data_ptr_(data_.allocate(1))
+            : data_(), data_ptr_(data_.allocate(1)) //  data_ptr_(&data_) // data_ptr_(data_.allocate(1))
         {
-
-            std::cout << "Status at 0: " << data_ptr_->status[0] << std::endl;
-
             if (option == page_ix_construct_option::INIT)
             {
                 for (UINT i = 0; i < N; ++i)
-                    data_[i].status = page_ix_status::INACTIVE;
+                    data_ptr_->status[i] = page_ix_status::ACTIVE;
 
-                write_block_data<page_ix_data>(file, data_.data());
-
-            } 
+                write_block_data<page_ix_data<UINT, N>>(file, page_no, data_ptr_);
+            }
             else 
             {
-                read_block_data<page_ix_data>(file, page_no, data_ptr_);
+                read_block_data<page_ix_data<UINT, N>>(file, page_no, data_ptr_);
             }
         }
     };

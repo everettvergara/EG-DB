@@ -19,7 +19,7 @@ namespace eg
             std::ofstream file(filename, std::ios::binary);
     }
 
-    auto get_file_handler_for_write_block_data(const std::string &filename) -> std::fstream
+    auto get_file_handler_for_read_write_data(const std::string &filename) -> std::fstream
     {
         create_file_if_not_exists(filename);
 
@@ -41,10 +41,10 @@ namespace eg
     }
 
     template <typename T>
-    auto write_data(std::fstream &file, const std::streampos pos, const T &data)
+    auto write_data(std::fstream &file, const std::streampos pos, const T *data)
     {
         file.seekp(pos, std::ios::beg);
-        file.write(reinterpret_cast<const char *>(&data), sizeof(T));
+        file.write(reinterpret_cast<const char *>(data), sizeof(T));
         if (file.fail()) throw std::runtime_error("Could not write to the file.");     
     }
 
@@ -70,7 +70,7 @@ namespace eg
     }
 
     template <typename T>
-    auto write_block_data(std::fstream &file, const T &data, const uint64_t i)
+    auto write_block_data(std::fstream &file, const uint64_t i, const T *data)
     {
         static_assert(std::is_trivially_copyable_v<T>, "Datastruct too complex.");
         write_data<T>(file, i * sizeof(T), data);
