@@ -42,6 +42,14 @@ namespace eg
     }
 
     template <typename T>
+    auto write_data(std::fstream &file, const std::streampos pos, const T &data) -> T
+    {
+        file.seekp(pos, std::ios::beg);
+        file.write(reinterpret_cast<const char *>(&data), sizeof(T));
+        if (file.fail()) throw std::runtime_error("Could not write to the file.");     
+    }
+
+    template <typename T>
     auto read_data(std::fstream &file, const std::streampos pos) -> T
     {
         T data;
