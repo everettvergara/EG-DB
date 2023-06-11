@@ -130,12 +130,13 @@ namespace eg
                 */
 
                 auto ix = data_ptr_->active_pos[id];
+
+                --data_ptr_->active_size;      
                 auto lid = data_ptr_->active[data_ptr_->active_size];
 
                 data_ptr_->active_pos[lid] = ix;
                 data_ptr_->active[ix]      = lid;
-
-                --data_ptr_->active_size;             
+       
             }       
         }
     
@@ -162,22 +163,24 @@ namespace eg
             return gen_id;
         }
 
-        auto delete_id(std::fstream &file, const uint64_t page_no, std::initializer_list<UINT> ids) -> UINT 
+        auto delete_id(std::fstream &file, const uint64_t page_no, std::initializer_list<UINT> ids)
         {
             for (auto id : ids) delete_id(id);
             commit_page(file, page_no);
         }
 
-        auto update_id(std::fstream &file, const uint64_t page_no, std::initializer_list<std::tuple<UINT, uint64_t>> ids_heaps) -> UINT 
+        auto update_id(std::fstream &file, const uint64_t page_no, std::initializer_list<std::tuple<UINT, uint64_t>> ids_heaps)
         {
             for (auto [id, heap_pos] : ids_heaps) update_id(id, heap_pos);
             commit_page(file, page_no);
         }
 
-        auto retrieve_heap_pos_by_id(const UINT id) const -> std::optional<uint64_t>
+        auto retrieve_heap_pos_by_id(const UINT id) const -> std::vector<std::tuple<UINT, uint64_t>>
         {
-            if (data_ptr_->status[id] not_eq page_ix_status::ACTIVE) return {};
-            return data_ptr_->heap_pos[id];
+             std::vector<std::tuple<UINT, uint64_t>> result;
+
+            if (data_ptr_->status[id] not_eq page_ix_status::ACTIVE) return result;
+            return {id, data_ptr_->heap_pos[id]};
         }
         
         auto retrieve_heap_pos_by_id(std::initializer_list<UINT> ids) const -> std::vector<std::tuple<UINT, uint64_t>>
