@@ -84,6 +84,11 @@ namespace eg
             else 
             {
                 read_block_data<page_ix_data<UINT, N>>(file, page_no, data_ptr_);
+
+                for (UINT i = 0; i < N; ++i)
+                    std::cout << static_cast<int>(data_ptr_->status[i]) << " ";
+
+                std::cout << std::endl;
             }
         }
     };
