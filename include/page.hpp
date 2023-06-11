@@ -63,33 +63,28 @@ namespace eg
         page_ix_data<UINT, N>           *data_ptr_;
         
     
+    private:
+
+        auto init_page_ix_block(std::fstream &file, const uint64_t page_no) -> void
+        {
+            for (UINT i = 0; i < N; ++i)
+                data_ptr_->status[i] = page_ix_status::ACTIVE;
+            write_block_data<page_ix_data<UINT, N>>(file, page_no, data_ptr_);
+        }
+
+        auto load_page_ix_block(std::fstream &file, const uint64_t page_no) -> void
+        {
+            read_block_data<page_ix_data<UINT, N>>(file, page_no, data_ptr_);
+        }
+
     public:
         page_ix(std::fstream &file, const uint64_t page_no, const page_ix_construct_option option)
-            
-            // Allocate the entire struct
-            // but do not initialize. 
-            //
-            // Initialization depends 
-            // on the type construct option.
-
-            : data_(), data_ptr_(data_.allocate(1)) //  data_ptr_(&data_) // data_ptr_(data_.allocate(1))
+            : data_(), data_ptr_(data_.allocate(1))
         {
-            if (option == page_ix_construct_option::INIT)
-            {
-                for (UINT i = 0; i < N; ++i)
-                    data_ptr_->status[i] = page_ix_status::ACTIVE;
-
-                write_block_data<page_ix_data<UINT, N>>(file, page_no, data_ptr_);
-            }
+            if (option == page_ix_construct_option::INIT) 
+                init_page_ix_block(file, page_no);
             else 
-            {
-                read_block_data<page_ix_data<UINT, N>>(file, page_no, data_ptr_);
-
-                for (UINT i = 0; i < N; ++i)
-                    std::cout << static_cast<int>(data_ptr_->status[i]) << " ";
-
-                std::cout << std::endl;
-            }
+                load_page_ix_block(file, page_no);   
         }
     };
 
