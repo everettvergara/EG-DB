@@ -14,5 +14,16 @@ auto main(int, char *[]) -> int
     std::cout << "expected size: " << s << std::endl;
     std::cout << "actual size: " << eg::get_file_size(file) << std::endl;
 
+    auto last_id = pix.generate_next_id(file, 0, 1000);
+
+    auto last_id_gen = pix.get_last_gen_id();
+    
+    if (last_id_gen.has_value())
+    {
+        std::cout << "last id gen: " << static_cast<int>(last_id) << std::endl;
+        std::cout << "last id gen: " << static_cast<int>(last_id_gen.value()) << std::endl;
+    }
+    else 
+        std::cout << "no ID gen!" << std::endl;
     return 0;
 }

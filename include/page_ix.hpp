@@ -89,6 +89,14 @@ namespace eg
         auto operator =(const page_ix &) -> page_ix & = delete;
         auto operator =(page_ix &&) -> page_ix & = delete;
 
+    public:
+
+        auto get_last_gen_id() -> std::optional<UINT>
+        {
+            if (data_ptr_->active_size == 0) return {};
+            return data_ptr_->next_id - 1;
+        }
+
     private:
 
         auto delete_id(const UINT id)
@@ -141,8 +149,8 @@ namespace eg
 
         auto generate_next_id(std::fstream &file, const uint64_t page_no, const uint64_t heap_pos) -> UINT
         {
-            auto gen_id                         = data_ptr_->next_id_++;
-            auto ix_active_size                 = data_ptr_->active_size_++;
+            auto gen_id                         = data_ptr_->next_id++;
+            auto ix_active_size                 = data_ptr_->active_size++;
 
             data_ptr_->active[ix_active_size]   = gen_id;
             data_ptr_->heap_pos[gen_id]         = heap_pos;
