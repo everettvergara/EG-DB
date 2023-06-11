@@ -6,11 +6,16 @@
 auto main(int, char *[]) -> int
 {
 
-    auto file = eg::get_file_handler_for_read_write_data("page_ix.data");
-    
-    eg::page_ix<uint8_t, 10> pix(file, 0, eg::page_ix_construct_option::LOAD);
+    std::string filename {"page_ix.data"};
 
-    constexpr auto s = sizeof(eg::page_ix_data<uint8_t, 10>);
+    auto file = eg::get_file_handler_for_read_write_data(filename);
+    
+    auto curr_file_size = eg::get_file_size(file);
+
+    auto option = curr_file_size == 0 ? eg::page_ix_construct_option::INIT : eg::page_ix_construct_option::LOAD;
+    eg::page_ix<uint8_t, 255> pix(file, 0, option);
+
+    constexpr auto s = sizeof(eg::page_ix_data<uint8_t, 255>);
     std::cout << "expected size: " << s << std::endl;
     std::cout << "actual size: " << eg::get_file_size(file) << std::endl;
 
@@ -24,6 +29,8 @@ auto main(int, char *[]) -> int
         std::cout << "last id gen: " << static_cast<int>(last_id_gen.value()) << std::endl;
     }
     else 
+    {
         std::cout << "no ID gen!" << std::endl;
+    }
     return 0;
 }
