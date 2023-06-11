@@ -8,7 +8,7 @@ auto main(int, char *[]) -> int
 
     auto file = eg::get_file_handler_for_read_write_data("page_ix.data");
     
-    eg::page_ix<uint8_t, 10> pix(file, 0, eg::page_ix_construct_option::INIT);
+    eg::page_ix<uint8_t, 10> pix(file, 0, eg::page_ix_construct_option::LOAD);
 
     constexpr auto s = sizeof(eg::page_ix_data<uint8_t, 10>);
     std::cout << "expected size: " << s << std::endl;
