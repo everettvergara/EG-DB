@@ -172,7 +172,22 @@ namespace eg
             return data_ptr_->heap_pos[id];
         }
 
-        
+        auto retrieve_heap_pos_all_active() const -> std::vector<std::tuple<UINT, uint64_t>>
+        {
+            std::vector<std::tuple<UINT, uint64_t>> result;
+            if (data_ptr_->active_size == 0) return result;
+
+            result.reserve(data_ptr_->active_size);
+
+            for (UINT i = 0; i < data_ptr_->active_size; ++i)
+            {
+                auto id = data_ptr_->active[i];
+                result.emplace_back(id, data_ptr_->heap_pos[id]);
+            }
+
+            return result;
+        }
+
     };
 
 }
