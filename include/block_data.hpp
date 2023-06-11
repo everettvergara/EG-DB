@@ -22,7 +22,6 @@ namespace eg
 
     auto get_file_handler_for_write_block_data(const std::string &filename) -> std::fstream
     {
-
         create_file_if_not_exists(filename);
 
         std::fstream file(filename, std::ios::binary | std::ios::in | std::ios::out);
@@ -53,6 +52,15 @@ namespace eg
         return data;        
     }
 
+    template <typename T>
+    auto read_data(std::fstream &file, const std::streampos pos, T *data) -> T *
+    {
+        file.seekg(pos, std::ios::beg);
+        file.read(reinterpret_cast<char *>(&data), sizeof(T));
+        if (file.fail()) throw std::runtime_error("Could not read from the file block.");
+
+        return data;        
+    }
 
     template <typename T>
     auto write_block_data(std::fstream &file, const T &data, const uint64_t i)
