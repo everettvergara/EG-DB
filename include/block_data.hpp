@@ -43,6 +43,18 @@ namespace eg
     }
 
     template <typename T>
+    auto read_data(std::fstream &file, const std::streampos pos) -> T
+    {
+        T data;
+        file.seekg(pos, std::ios::beg);
+        file.read(reinterpret_cast<char *>(&data), sizeof(T));
+        if (file.fail()) throw std::runtime_error("Could not read from the file block.");
+
+        return data;        
+    }
+
+
+    template <typename T>
     auto write_block_data(std::fstream &file, const T &data, const uint64_t i)
     {
         static_assert(std::is_trivially_copyable_v<T>, "Datastruct too complex.");
@@ -91,5 +103,7 @@ namespace eg
         if (file.fail()) throw std::runtime_error("Could not read from the file block.");
 
         return data;
-    }    
+    }
+
+
 }
