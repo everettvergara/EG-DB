@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <memory>
 #include <optional>
+#include <type_traits>
 
 #include "common.hpp"
 #include "block_data.hpp"
@@ -44,14 +45,16 @@ namespace eg
     template <typename T>
     struct no_init : std::allocator<T>
     {
+        static_assert(std::is_trivially_copyable_v<T>, "no_init is allowable only on trivially copyable structs.");
+
         auto allocate(const size_t N) -> T *
         {
             auto *t = std::allocator<T>::allocate(N);
             return t;
         }
 
-        template<typename U, typename... Args>
-        void construct(U* ptr, Args&&... args) 
+        template<typename U, typename ...Args>
+        void construct(U* ptr, Args &&... args) 
         {
         }
 
@@ -61,6 +64,41 @@ namespace eg
         }
     };
 
+    template <typename UINT, UINT N>
+    class page_ix
+    {
+    private:
+
+        no_init<page_ix_data<UINT, N>>  data_;
+        page_ix_data                    *data_ptr_;
+        
+    
+    public:
+        page_ix(std::fstream &file, const uint64_t page_no, const page_ix_construct_option option)
+            
+            // Allocate the entire struct
+            // but do not initialize. 
+            //
+            // Initialization depends 
+            // on the type construct option.
+
+            : data_(), data_ptr_(data_.allocate(1))
+        {
+
+            if (option == page_ix_construct_option::INIT)
+            {
+                for (UINT i = 0; i < N; ++i)
+                    data_[i].status = page_ix_status::INACTIVE;
+
+                write_block_data<page_ix_data>(file, data_.data());
+
+            } 
+            else 
+            {
+                read_block_data<page_ix_data>(file, page_no, data_ptr_);
+            }
+        }
+    };
 
 /*
     template <typename UINT, UINT N>
