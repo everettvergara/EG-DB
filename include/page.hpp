@@ -135,6 +135,12 @@ namespace eg
             for (auto id : ids) delete_id(id);
             commit_page(file, page_no);
         }
+
+        auto update_id(std::fstream &file, const uint64_t page_no, std::initializer_list<std::tuple<UINT, uint64_t>> ids_heaps) -> UINT 
+        {
+            for (auto [id, heap_pos] : ids_heaps) update_id(id, heap_pos);
+            commit_page(file, page_no);
+        }        
     };
 
 }
