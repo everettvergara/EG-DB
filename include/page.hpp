@@ -6,6 +6,7 @@
 #include <memory>
 #include <optional>
 #include <type_traits>
+#include <initializer_list>
 
 #include "common.hpp"
 #include "block_data.hpp"
@@ -106,7 +107,8 @@ namespace eg
             return gen_id;
         }
 
-        auto delete_id_wo_commit(std::fstream &file, const uint64_t page_no, const UINT id)
+    private:
+        auto delete_id(const UINT id)
         {
             if (data_ptr_->status[id] not_eq page_ix_status::ACTIVE) return;
             
@@ -119,6 +121,13 @@ namespace eg
                 data_ptr_->active_pos[lix] = i;
                 --data_ptr_->active_size;             
             }       
+        }
+    
+    public:
+        auto delete_id(std::fstream &file, const uint64_t page_no, std::initializer_list<UINT> ids) -> UINT 
+        {
+            for (auto id : ids) delete_id(id);
+            commit_page(file, page_no);
         }
     };
 
