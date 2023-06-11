@@ -7,6 +7,7 @@
 #include <optional>
 #include <type_traits>
 #include <initializer_list>
+#include <mutex>
 
 #include "common.hpp"
 #include "block_data.hpp"
@@ -60,6 +61,7 @@ namespace eg
 
         no_init<page_ix_data<UINT, N>>  data_;
         page_ix_data<UINT, N>           *data_ptr_;
+        std::mutex                      action_mutex_;
         
     
     private:
@@ -101,6 +103,7 @@ namespace eg
 
         auto delete_id(const UINT id) -> UINT
         {
+
             if (data_ptr_->status[id] not_eq page_ix_status::ACTIVE) return 0;
             
             data_ptr_->status[id] = page_ix_status::DELETED;
@@ -140,6 +143,7 @@ namespace eg
     
         auto update_id(const UINT id, const uint64_t heap_pos)
         {
+
             if (data_ptr_->status[id] not_eq page_ix_status::ACTIVE) return;
             data_ptr_->heap_pos[id] = heap_pos;
         }
@@ -148,6 +152,8 @@ namespace eg
 
         auto generate_next_id(std::fstream &file, const uint64_t page_no, const uint64_t heap_pos) -> UINT
         {
+            std::lock_guard<std::mutex> lock(action_mutex_);
+
             auto gen_id                         = data_ptr_->next_id++;
             auto ix_active_size                 = data_ptr_->active_size++;
 
@@ -163,10 +169,12 @@ namespace eg
 
         auto delete_all(std::fstream &file, const uint64_t page_no) -> UINT 
         {
+            std::lock_guard<std::mutex> lock(action_mutex_);
+
             auto affected_rows = data_ptr_->active_size;
 
             for (UINT i = 0; i < data_ptr_->active_size; ++i)
-                data_ptr_->status[active[i]] = page_ix_status::DELETED;
+                data_ptr_->status[data_ptr_->active[i]] = page_ix_status::DELETED;
 
             data_ptr_->active_size = 0;
 
@@ -177,6 +185,8 @@ namespace eg
 
         auto delete_id(std::fstream &file, const uint64_t page_no, std::initializer_list<UINT> ids) -> UINT 
         {
+            std::lock_guard<std::mutex> lock(action_mutex_);
+
             auto affected_rows = 0;
 
             for (auto id : ids) 
@@ -188,12 +198,16 @@ namespace eg
 
         auto update_id(std::fstream &file, const uint64_t page_no, std::initializer_list<std::tuple<UINT, uint64_t>> ids_heaps)
         {
+            std::lock_guard<std::mutex> lock(action_mutex_);
+
             for (auto [id, heap_pos] : ids_heaps) update_id(id, heap_pos);
             commit_page(file, page_no);
         }
 
         auto retrieve_heap_pos_by_id(const UINT id) const -> std::vector<std::tuple<UINT, uint64_t>>
         {
+            std::lock_guard<std::mutex> lock(action_mutex_);
+
              std::vector<std::tuple<UINT, uint64_t>> result;
 
             if (data_ptr_->status[id] not_eq page_ix_status::ACTIVE) return result;
@@ -202,6 +216,8 @@ namespace eg
         
         auto retrieve_heap_pos_by_id(std::initializer_list<UINT> ids) const -> std::vector<std::tuple<UINT, uint64_t>>
         {
+            std::lock_guard<std::mutex> lock(action_mutex_);
+
             std::vector<std::tuple<UINT, uint64_t>> result;
             
             for (auto id : ids)
@@ -215,6 +231,8 @@ namespace eg
 
         auto retrieve_heap_pos_all_active() const -> std::vector<std::tuple<UINT, uint64_t>>
         {
+            std::lock_guard<std::mutex> lock(action_mutex_);
+
             std::vector<std::tuple<UINT, uint64_t>> result;
             if (data_ptr_->active_size == 0) return result;
 
