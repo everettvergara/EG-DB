@@ -40,12 +40,10 @@ namespace eg
     {
         uint64_t        heap_pos[N];
         UINT            active_pos[N];
-        page_ix_status  status[N] = {page_ix_status::DELETED, page_ix_status::DELETED};
+        page_ix_status  status[N];
         uint64_t        active_size;
         UINT            active[N];
         UINT            next_id;
-
-        test            test_data[10];
     };
 
     template <typename T>
@@ -65,14 +63,12 @@ namespace eg
     
     private:
 
-        auto init_page_ix_block(std::fstream &file, const uint64_t page_no) -> void
+        auto commit_page(std::fstream &file, const uint64_t page_no) -> void
         {
-            for (UINT i = 0; i < N; ++i)
-                data_ptr_->status[i] = page_ix_status::ACTIVE;
             write_block_data<page_ix_data<UINT, N>>(file, page_no, data_ptr_);
         }
 
-        auto load_page_ix_block(std::fstream &file, const uint64_t page_no) -> void
+        auto load_page(std::fstream &file, const uint64_t page_no) -> void
         {
             read_block_data<page_ix_data<UINT, N>>(file, page_no, data_ptr_);
         }
@@ -82,11 +78,51 @@ namespace eg
             : data_(), data_ptr_(data_.allocate(1))
         {
             if (option == page_ix_construct_option::INIT) 
-                init_page_ix_block(file, page_no);
+                commit_page(file, page_no);
             else 
-                load_page_ix_block(file, page_no);   
+                load_page(file, page_no);   
+        }
+
+        page_ix(const page_ix &) = delete;
+        page_ix(page_ix &&) = delete;
+        auto operator =(const ppage_ixage &) -> page_ix & = delete;
+        auto operator =(page_ix &&) -> page_ix & = delete;
+
+
+    public:
+
+        auto generate_next_id(std::fstream &file, const uint64_t page_no, const uint64_t heap_pos) -> UINT
+        {
+            auto gen_id                         = data_ptr_->next_id_++;
+            auto ix_active_size                 = data_ptr_->active_size_++;
+
+            data_ptr_->active[ix_active_size]   = gen_id;
+            data_ptr_->heap_pos[gen_id]         = heap_pos;
+            data_ptr_->active_pos[gen_id]       = ix_active_size;
+            data_ptr_->status[gen_id]           = page_ix_status::ACTIVE;
+
+            commit_page(file, page_no);
+            
+            return gen_id;
+        }
+
+        auto delete_id_wo_commit(std::fstream &file, const uint64_t page_no, const UINT id)
+        {
+            if (data_ptr_->status[id] not_eq page_ix_status::ACTIVE) return;
+            
+            data_ptr_->status[id] = page_ix_status::deleted;
+
+            if (data_ptr_->active_size > 0)
+            {
+                auto lix = data_ptr_->active_size - 1;
+                data_ptr_->active[i] = data_ptr_->active[lix]; 
+                data_ptr_->active_pos[lix] = i;
+                --data_ptr_->active_size;             
+            }       
         }
     };
+
+
 
 /*
     template <typename UINT, UINT N>
@@ -121,7 +157,6 @@ namespace eg
         page(page &&) = delete;
         auto operator =(const page &) -> page & = delete;
         auto operator =(page &&) -> page & = delete;
-
 
     public:
 
