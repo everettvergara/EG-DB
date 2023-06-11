@@ -50,14 +50,16 @@ auto main(int, char *[]) -> int
     std::cout << "Expecting size after write: " << sizeof(data_sample) * N << std::endl;
     std::cout << "File size after write: " << get_file_size(file) << std::endl;
 
+    data_sample d;
     for (auto i = 0; i < N; ++i)
     {
-        auto d = read_block_data<data_sample>(file, i);
+        read_block_data<data_sample>(file, i, &d);
+        // auto d = read_block_data<data_sample>(file, i);
 
-        if (d.has_value())
-        {
-            std::cout << d.value().x << ", " << d.value().y << std::endl;
-        }
+        // if (d.has_value())
+        // {
+        std::cout << d.x << ", " << d.y << std::endl;
+        // }
     }
 
     return 0;
