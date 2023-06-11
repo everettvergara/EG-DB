@@ -89,25 +89,8 @@ namespace eg
         auto operator =(const ppage_ixage &) -> page_ix & = delete;
         auto operator =(page_ix &&) -> page_ix & = delete;
 
-
-    public:
-
-        auto generate_next_id(std::fstream &file, const uint64_t page_no, const uint64_t heap_pos) -> UINT
-        {
-            auto gen_id                         = data_ptr_->next_id_++;
-            auto ix_active_size                 = data_ptr_->active_size_++;
-
-            data_ptr_->active[ix_active_size]   = gen_id;
-            data_ptr_->heap_pos[gen_id]         = heap_pos;
-            data_ptr_->active_pos[gen_id]       = ix_active_size;
-            data_ptr_->status[gen_id]           = page_ix_status::ACTIVE;
-
-            commit_page(file, page_no);
-            
-            return gen_id;
-        }
-
     private:
+
         auto delete_id(const UINT id)
         {
             if (data_ptr_->status[id] not_eq page_ix_status::ACTIVE) return;
@@ -130,6 +113,22 @@ namespace eg
         }
 
     public:
+
+        auto generate_next_id(std::fstream &file, const uint64_t page_no, const uint64_t heap_pos) -> UINT
+        {
+            auto gen_id                         = data_ptr_->next_id_++;
+            auto ix_active_size                 = data_ptr_->active_size_++;
+
+            data_ptr_->active[ix_active_size]   = gen_id;
+            data_ptr_->heap_pos[gen_id]         = heap_pos;
+            data_ptr_->active_pos[gen_id]       = ix_active_size;
+            data_ptr_->status[gen_id]           = page_ix_status::ACTIVE;
+
+            commit_page(file, page_no);
+            
+            return gen_id;
+        }
+
         auto delete_id(std::fstream &file, const uint64_t page_no, std::initializer_list<UINT> ids) -> UINT 
         {
             for (auto id : ids) delete_id(id);
@@ -140,7 +139,8 @@ namespace eg
         {
             for (auto [id, heap_pos] : ids_heaps) update_id(id, heap_pos);
             commit_page(file, page_no);
-        }        
+        }
+
     };
 
 }
