@@ -99,45 +99,43 @@ namespace eg
 
     private:
 
-        auto delete_id(const UINT id)
+        auto delete_id(const UINT id) -> UINT
         {
-            if (data_ptr_->status[id] not_eq page_ix_status::ACTIVE) return;
+            if (data_ptr_->status[id] not_eq page_ix_status::ACTIVE) return 0;
             
             data_ptr_->status[id] = page_ix_status::DELETED;
 
-            if (data_ptr_->active_size > 0)
-            {
-                /*
-                    active_pos[id]
-                    0,  1   2   3   4   5   id
-                    --
-                    5,  4,  3,  2,  1,  0   ix in active[]
-                                * ix: data_ptr_->active_pos_[id]    
+            /*
+                active_pos[id]
+                0,  1   2   3   4   5   id
+                --
+                5,  4,  3,  2,  1,  0   ix in active[]
+                            * ix: data_ptr_->active_pos_[id]    
 
-                    active[] Active Indices
-                    0,  1   2   3   4   5
-                    --
-                    5,  4,  3,  2,  1,  0
-                            |           * lid: data_ptr_->active[data_ptr_->active_size];
-                            
+                active[] Active Indices
+                0,  1   2   3   4   5
+                --
+                5,  4,  3,  2,  1,  0
+                        |           * lid: data_ptr_->active[data_ptr_->active_size];
+                        
 
-                    ix: position of ID in active = data_ptr_->active_pos[id];
-                        in the above sample: 
+                ix: position of ID in active = data_ptr_->active_pos[id];
+                    in the above sample: 
 
-                    lid: ID of the last active: data_ptr_->active[data_ptr_->active_size_];
-                    lix: position of lid in active = data_ptr_->active[data_ptr_->active_pos_[lid]]
+                lid: ID of the last active: data_ptr_->active[data_ptr_->active_size_];
+                lix: position of lid in active = data_ptr_->active[data_ptr_->active_pos_[lid]]
 
-                */
+            */
 
-                auto ix = data_ptr_->active_pos[id];
+            auto ix = data_ptr_->active_pos[id];
 
-                --data_ptr_->active_size;      
-                auto lid = data_ptr_->active[data_ptr_->active_size];
+            --data_ptr_->active_size;      
+            auto lid = data_ptr_->active[data_ptr_->active_size];
 
-                data_ptr_->active_pos[lid] = ix;
-                data_ptr_->active[ix]      = lid;
-       
-            }       
+            data_ptr_->active_pos[lid] = ix;
+            data_ptr_->active[ix]      = lid;
+
+            return 1;
         }
     
         auto update_id(const UINT id, const uint64_t heap_pos)
@@ -165,19 +163,27 @@ namespace eg
 
         auto delete_all(std::fstream &file, const uint64_t page_no) -> UINT 
         {
-            
+            auto affected_rows = data_ptr_->active_size;
+
             for (UINT i = 0; i < data_ptr_->active_size; ++i)
                 data_ptr_->status[active[i]] = page_ix_status::DELETED;
 
             data_ptr_->active_size = 0;
 
             commit_page(file, page_no);
+
+            return affected_rows;
         }
 
-        auto delete_id(std::fstream &file, const uint64_t page_no, std::initializer_list<UINT> ids)
+        auto delete_id(std::fstream &file, const uint64_t page_no, std::initializer_list<UINT> ids) -> UINT 
         {
-            for (auto id : ids) delete_id(id);
+            auto affected_rows = 0;
+
+            for (auto id : ids) 
+                affected_rows += delete_id(id);
             commit_page(file, page_no);
+
+            return affected_rows;
         }
 
         auto update_id(std::fstream &file, const uint64_t page_no, std::initializer_list<std::tuple<UINT, uint64_t>> ids_heaps)
