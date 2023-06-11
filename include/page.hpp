@@ -35,12 +35,10 @@ namespace eg
     {
         uint64_t        heap_pos[N];
         UINT            active_pos[N];
-        page_ix_status  status[N] = {page_ix_status::ACTIVE, page_ix_status::ACTIVE};
+        page_ix_status  status[N];
         uint64_t        active_size;
         UINT            active[N];
         UINT            next_id;
-
-        test            test_[10];
     };
 
     template <typename T>
@@ -49,14 +47,12 @@ namespace eg
         auto allocate(const size_t N) -> T *
         {
             auto *t = std::allocator<T>::allocate(N);
-
-            std::cout << "hello: " << N <<std::endl; 
             return t;
         }
 
         template<typename U, typename... Args>
-        void construct(U* ptr, Args&&... args) {
-            std::cout << "hello constructor" << std::endl;
+        void construct(U* ptr, Args&&... args) 
+        {
         }
 
         auto deallocate(T *t, size_t N)
