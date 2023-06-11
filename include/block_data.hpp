@@ -74,10 +74,7 @@ namespace eg
     auto write_block_data(std::fstream &file, const T &data, const uint64_t i)
     {
         static_assert(std::is_trivially_copyable_v<T>, "Datastruct too complex.");
-
-        file.seekp(i * sizeof(T), std::ios::beg);
-        file.write(reinterpret_cast<const char *>(&data), sizeof(T));
-        if (file.fail()) throw std::runtime_error("Could not write to the file block.");
+        write_data<T>(file, i * sizeof(T), data);
     }
 
     template <typename T>
