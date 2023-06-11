@@ -86,7 +86,7 @@ namespace eg
 
         page_ix(const page_ix &) = delete;
         page_ix(page_ix &&) = delete;
-        auto operator =(const ppage_ixage &) -> page_ix & = delete;
+        auto operator =(const page_ix &) -> page_ix & = delete;
         auto operator =(page_ix &&) -> page_ix & = delete;
 
     private:
@@ -95,13 +95,38 @@ namespace eg
         {
             if (data_ptr_->status[id] not_eq page_ix_status::ACTIVE) return;
             
-            data_ptr_->status[id] = page_ix_status::deleted;
+            data_ptr_->status[id] = page_ix_status::DELETED;
 
             if (data_ptr_->active_size > 0)
             {
-                auto lix = data_ptr_->active_size - 1;
-                data_ptr_->active[i] = data_ptr_->active[lix]; 
-                data_ptr_->active_pos[lix] = i;
+                /*
+                    active_pos[id]
+                    0,  1   2   3   4   5   id
+                    --
+                    5,  4,  3,  2,  1,  0   ix in active[]
+                                * ix: data_ptr_->active_pos_[id]    
+
+                    active[] Active Indices
+                    0,  1   2   3   4   5
+                    --
+                    5,  4,  3,  2,  1,  0
+                            |           * lid: data_ptr_->active[data_ptr_->active_size];
+                            
+
+                    ix: position of ID in active = data_ptr_->active_pos[id];
+                        in the above sample: 
+
+                    lid: ID of the last active: data_ptr_->active[data_ptr_->active_size_];
+                    lix: position of lid in active = data_ptr_->active[data_ptr_->active_pos_[lid]]
+
+                */
+
+                auto ix = data_ptr_->active_pos[id];
+                auto lid = data_ptr_->active[data_ptr_->active_size];
+
+                data_ptr_->active_pos[lid] = ix;
+                data_ptr_->active[ix]      = lid;
+
                 --data_ptr_->active_size;             
             }       
         }
