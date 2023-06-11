@@ -13,7 +13,6 @@
 
 namespace eg
 {
-
     auto create_file_if_not_exists(const std::string &filename)
     {
         if (not std::filesystem::exists(filename)) 
@@ -42,7 +41,7 @@ namespace eg
     }
 
     template <typename T>
-    auto write_data(std::fstream &file, const std::streampos pos, const T &data) -> T
+    auto write_data(std::fstream &file, const std::streampos pos, const T &data)
     {
         file.seekp(pos, std::ios::beg);
         file.write(reinterpret_cast<const char *>(&data), sizeof(T));
@@ -89,26 +88,27 @@ namespace eg
         return last_ix;
     }
 
-
     template <typename T>
-    auto validate_block_data_ix(std::fstream &file, const uint64_t i)
+    auto validate_block_data_ix(std::fstream &file, const uint64_t i) -> std::optional<uint64_t>
     {
         auto last_ix = get_last_ix_of_block_data<T>(file);
         if (not last_ix.has_value()) return {};
         if (i > last_ix.value()) throw std::runtime_error("Invalid index to load.");
+    
+        return last_ix;
     }
 
     template <typename T>
     auto read_block_data(std::fstream &file, const uint64_t i) -> std::optional<T>
     {
-        if (not validate_block_data_ix(file).has_value()) return {};
-        return read_data<T>(file, i * sizeof(T));      
+        if (not validate_block_data_ix<T>(file, i).has_value()) return {};
+        return read_data<T>(file, i * sizeof(T));
     }
 
     template <typename T>
     auto read_block_data(std::fstream &file, const uint64_t i, T *data) -> T *
     {
-        if (not validate_block_data_ix(file).has_value()) return {};
+        if (not validate_block_data_ix<T>(file, i).has_value()) return nullptr;
         return read_data<T>(file, i * sizeof(T), data);
     }
 
