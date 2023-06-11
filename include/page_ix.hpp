@@ -163,6 +163,17 @@ namespace eg
             return gen_id;
         }
 
+        auto delete_all(std::fstream &file, const uint64_t page_no) -> UINT 
+        {
+            
+            for (UINT i = 0; i < data_ptr_->active_size; ++i)
+                data_ptr_->status[active[i]] = page_ix_status::DELETED;
+
+            data_ptr_->active_size = 0;
+
+            commit_page(file, page_no);
+        }
+
         auto delete_id(std::fstream &file, const uint64_t page_no, std::initializer_list<UINT> ids)
         {
             for (auto id : ids) delete_id(id);
