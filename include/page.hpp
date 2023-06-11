@@ -166,6 +166,13 @@ namespace eg
             commit_page(file, page_no);
         }
 
+        auto retrieve_heap_pos_by_id(const UINT id) const -> std::optional<uint64_t>
+        {
+            if (data_ptr_->status[id] not_eq page_ix_status::ACTIVE) return {};
+            return data_ptr_->heap_pos[id];
+        }
+
+        
     };
 
 }
