@@ -25,7 +25,7 @@ namespace eg
         INIT, LOAD
     };
 
-    template <typename UINT, UINT N>
+    template <typename UINT, uint64_t N>
     struct page_ix_data
     {
         uint64_t        heap_pos[N];
@@ -42,7 +42,7 @@ namespace eg
         static_assert(std::is_trivially_copyable_v<T>, "no_init is allowable only on trivially copyable structs.");
     };
 
-    template <typename UINT, UINT N>
+    template <typename UINT, uint64_t N>
     class page_ix
     {
     private:
