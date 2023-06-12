@@ -4,6 +4,7 @@
 #include <type_traits>
 #include <cstring>
 #include <vector>
+#include <stdexcept>
 
 #include "common.hpp"
 #include "column_attr.hpp"
@@ -12,13 +13,17 @@ namespace eg
 {
     class column
     {
+    private: 
+        
+        column_attr             attr_;
+        std::vector<uint8_t>    data_;
+
     public:
 
-        column(const column_attr &attr)
+        column(const column_attr attr)
             :   attr_(attr), 
                 data_(sizeof(uint_t) + (attr_.is_varsize ? 0 : attr_.max_size), '\0')
         {
-            // Update the current size of the column
             uint_t sizeof_column = attr_.is_varsize ? 0 : attr_.max_size;
             std::memcpy(data_.data(), &sizeof_column, sizeof(uint_t));
         }
@@ -162,11 +167,6 @@ namespace eg
         {
             return data_;
         }
-
-    private: 
-        
-        const column_attr       &attr_;
-        std::vector<uint8_t>    data_;
 
 
     };    
