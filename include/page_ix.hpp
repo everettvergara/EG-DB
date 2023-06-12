@@ -10,7 +10,7 @@
 #include <mutex>
 
 #include "common.hpp"
-#include "block_data.hpp"
+#include "file_helper.hpp"
 
 namespace eg
 {
@@ -25,27 +25,15 @@ namespace eg
         INIT, LOAD
     };
 
-    // TODO: CHANGE ACTIVE_SIZE TO UINT, since N = 0 to 254
-    struct test
-    {
-        int x;
-        test() 
-            : x(10)
-        {
-            std::cout << "test constructor here..." << std::endl;
-        }
-
-    };
-
     template <typename UINT, UINT N>
     struct page_ix_data
     {
-        uint64_t        heap_pos[N];    //  8 * 10  =   80
-        UINT            active_pos[N];  //  1 * 10  =   10
-        page_ix_status  status[N];      //  1 * 10  =   10
-        uint64_t        active_size;    //  8       =   8
-        UINT            active[N];      //  1 * 10  =   10
-        UINT            next_id;        //  1       =   1   ==  120
+        uint64_t        heap_pos[N];
+        UINT            active_pos[N];
+        page_ix_status  status[N];
+        uint64_t        active_size;
+        UINT            active[N];
+        UINT            next_id;
     };
 
     template <typename T>
@@ -105,7 +93,7 @@ namespace eg
         {
 
             if (data_ptr_->status[id] not_eq page_ix_status::ACTIVE) return 0;
-            
+
             data_ptr_->status[id] = page_ix_status::DELETED;
 
             /*
@@ -143,7 +131,6 @@ namespace eg
     
         auto update_id(const UINT id, const uint64_t heap_pos)
         {
-
             if (data_ptr_->status[id] not_eq page_ix_status::ACTIVE) return;
             data_ptr_->heap_pos[id] = heap_pos;
         }
@@ -246,7 +233,5 @@ namespace eg
 
             return result;
         }
-
     };
-
 }
