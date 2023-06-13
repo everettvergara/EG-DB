@@ -43,6 +43,8 @@ namespace eg
         std::string page_ix_name_;
         
         std::vector<column> columns_;
+
+        // write a column cardinality initializer for constructor
         std::unordered_map<const char *, uint_t> column_cardinality_;
 
         uint64_t last_page_ix_no_;
